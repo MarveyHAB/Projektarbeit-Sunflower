@@ -1,6 +1,7 @@
 from machine import Pin
 from time import sleep_us,sleep,sleep_ms
 from hmc5883l import HMC5883L
+from Sonne import getAZ
 
 brake     = Pin(11 , Pin.OUT,value =0)
 # Pins für den DRV8825 Schrittmotor-Treiber
@@ -12,11 +13,15 @@ SLEEP_PIN = Pin(4, Pin.OUT,value =0)  # Aktivierung des Treibers
 # Mikroschritt-Modus 1 = 1
 # Mikroschritt-Modus 2 = 0
 
-def step(sunPos):
+def step():
+    #aktuelle Sonnenposition abfragen
+        sunPos = int(getAZ(51,7,2))
+    #aktuelle Position herausfinden
         with open("totale_pos.txt","r") as datei:
             inhalt  = datei.read()
             abs_pos = int(inhalt)
         akt_pos = abs_pos
+        print("Sonnenposition: %i"%sunPos)
         print("aktuelle Pos.:%i"%akt_pos)   
     # Berechnung des kürzesten Weges im Uhrzeigersinn
         im_uhrzeigersinn = (sunPos - akt_pos) % 360
@@ -55,5 +60,4 @@ def step(sunPos):
         print("angefahrene Pos. %i"%akt_pos)
         with open("totale_pos.txt","w") as datei:
                 datei.write(str(akt_pos))
-
-
+step()
