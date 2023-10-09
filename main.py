@@ -1,8 +1,9 @@
 import veml7700
+import ds1307
 from hmc5883l import HMC5883L
 from sonne_jan import getAZ, getSEA
 from drehen import step #sunPos
-from machine import Pin
+from machine import Pin, RTC, SoftI2C
 from time import sleep, sleep_ms
 
 btn_start         = Pin(22 , Pin.IN,PULL_DOWN)
