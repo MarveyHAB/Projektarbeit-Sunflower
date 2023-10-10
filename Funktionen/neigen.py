@@ -111,5 +111,10 @@ def neigen_sonne():
     with open("tot_pos_neigen.txt","w") as datei:
         datei.write(str(neue_pos))
 
-
+neigen0()
+neigen90()
+neigen_sonne()
+neigen0()
+    
+    
 
