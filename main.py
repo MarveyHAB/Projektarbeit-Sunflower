@@ -10,10 +10,10 @@ from time import sleep, sleep_ms
 ausrichtung_check = Timer()
 
 #BTN
-btn_startstopp    = Pin(22 , Pin.IN,PULL_DOWN)
-btn_NOTStopp      = Pin(26 , Pin.IN,PULL_DOWN)
-btn_einfahren     = Pin(27 , Pin.IN,PULL_DOWN)
-ini_ausgefaechert = Pin(21 , Pin.IN,PULL_DOWN)
+btn_startstopp    = Pin(22 , Pin.IN,Pin.PULL_DOWN)
+btn_NOTStopp      = Pin(26 , Pin.IN,Pin.PULL_DOWN)
+btn_einfahren     = Pin(27 , Pin.IN,Pin.PULL_DOWN)
+ini_ausgefaechert = Pin(21 , Pin.IN,Pin.PULL_DOWN)
 anlage_ein        = False
 
 def ISR_ausrichtung(abc):
