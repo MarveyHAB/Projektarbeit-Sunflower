@@ -1,8 +1,8 @@
 from machine import Pin
 from time import sleep
 
-ini_eingefaechert = Pin(20 , Pin.IN,PULL_DOWN)
-ini_ausgefaechert = Pin(21 , Pin.IN,PULL_DOWN)
+ini_eingefaechert = Pin(20 , Pin.IN,Pin.PULL_DOWN)
+ini_ausgefaechert = Pin(21 , Pin.IN,Pin.PULL_DOWN)
 brake     = Pin(13 , Pin.OUT,value =0)
 # Pins für den DRV8825 Schrittmotor-Treiber
 DIR_PIN   = Pin(8 , Pin.OUT,value =0)  # Richtungs-Pin 1 Uhrzeigersinn
@@ -13,7 +13,7 @@ SLEEP_PIN = Pin(10, Pin.OUT,value =1)  # Aktivierung des Treibers
 # Mikroschritt-Modus 1 = 1
 # Mikroschritt-Modus 2 = 0
 
-def auffaechern:
+def auffaechern():
     if ini_eingefaechert==0:
         print ("Unbestimmte Pos")
         return(False)
@@ -36,7 +36,7 @@ def auffaechern:
     sleep(0.5)
     SLEEP_PIN.value(0)
     
-def einfaechern:
+def einfaechern():
     if ini_ausgefaechert==0:
         print ("Unbestimmte Pos")
         return(False)
