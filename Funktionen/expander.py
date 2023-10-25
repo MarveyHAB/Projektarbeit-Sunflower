@@ -3,8 +3,8 @@ import VEML7700
 i2c = I2C(1, freq=100000, scl=Pin(1), sda=Pin(0))
 
 # enable channel 0,1,2,3 (SD0,SC0)
-i2c.writeto(0x70, b'\xF')
-i2c.scan()
+#i2c.writeto(0x70, b'\xF')
+#i2c.scan()
 
 # enable channel 0 (SD0,SC0)
 i2c.writeto(0x70, b'\x01')
@@ -25,7 +25,6 @@ LichtLinks = i2c.VEML7700.read_lux()
 i2c.writeto(0x70, b'\x01')
 i2c.scan()
 LichtOrechts = i2c.VEML7700.read_lux()
-
 
 # read which channels are enabled?
 i2c.readfrom(0x70, 1)
