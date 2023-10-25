@@ -1,5 +1,5 @@
 from machine import I2C, Pin
-i2c = I2C(scl=Pin(1), sda=Pin(0))
+i2c = I2C(1, freq=100000, scl=Pin(1), sda=Pin(0))
 
 # enable channel 0,1,2,3 (SD0,SC0)
 i2c.writeto(0x70, b'\xF')
