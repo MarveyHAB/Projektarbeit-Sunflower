@@ -14,7 +14,7 @@ LichtOben = i2c.VEML7700.read_lux()
 # enable channel 1 (SD1,SC1)
 i2c.writeto(0x70, b'\x02')
 i2c.scan()
-LichtUben = i2c.VEML7700.read_lux()
+LichtUnten = i2c.VEML7700.read_lux()
 
 # enable channel 2 (SD2,SC2)
 i2c.writeto(0x70, b'\x04')
@@ -24,7 +24,7 @@ LichtLinks = i2c.VEML7700.read_lux()
 # enable channel 3 (SD3,SC3)
 i2c.writeto(0x70, b'\x08')
 i2c.scan()
-LichtOrechts = i2c.VEML7700.read_lux()
+LichtRechts = i2c.VEML7700.read_lux()
 
 # read which channels are enabled?
 i2c.readfrom(0x70, 1)
