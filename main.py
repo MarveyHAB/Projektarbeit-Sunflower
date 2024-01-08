@@ -10,10 +10,10 @@ from time import sleep, sleep_ms
 ausrichtung_check = Timer()
 
 #BTN
-btn_startstopp    = Pin(22 , Pin.IN,Pin.PULL_DOWN)
-btn_NOTStopp      = Pin(26 , Pin.IN,Pin.PULL_DOWN)
-btn_einfahren     = Pin(27 , Pin.IN,Pin.PULL_DOWN)
-ini_ausgefaechert = Pin(21 , Pin.IN,Pin.PULL_DOWN)
+btn_startstopp    = Pin(27 , Pin.IN,Pin.PULL_UP)
+btn_NOTStopp      = Pin(26 , Pin.IN,Pin.PULL_UP)
+#btn_einfahren     = Pin(22 , Pin.IN,Pin.PULL_UP)
+ini_ausgefaechert = Pin(21 , Pin.IN,Pin.PULL_UP)
 anlage_ein        = False
 
 def ISR_ausrichtung(abc):
@@ -25,14 +25,14 @@ def ablauf(pin22):
     global anlage_ein
     anlage_ein = not anlage_ein
     if(anlage_ein == True):
-        ausrichtung_check.init(period=120000 , mode=Timer.PERIODIC, callback=ISR_ausrichtung)
+        ausrichtung_check.init(period=120000 , mode=Timer.PERIODIC, callback=ISR_ausrichtung) #TODO Zeit!
     else
         ausrichtung_check.deinit()
         
     while anlage_ein is True:
         if ini_ausgefaechert != 1:
             {
-                #neigen 90grad
+            #neigen 90grad
             #auffächern
             #drehen:
             step(int(AZ))
@@ -46,10 +46,12 @@ def ablauf(pin22):
     ausrichtung_check.deinit()
     
 def NOTStopp(pin26):
-    global anlage_ein
+    global NOTHALT
     anlage_ein = False
     ausrichtung_check.deinit()
 
 btn_startstopp.irq(trigger=Pin.IRQ_FALLING, handler=ablauf)
 btn_NOTStopp.irq(trigger=Pin.IRQ_FALLING, handler=NOTStopp)
+
+
 
