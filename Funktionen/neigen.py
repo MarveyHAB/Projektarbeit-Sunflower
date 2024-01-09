@@ -1,3 +1,5 @@
+#ToDo: return false wenn endlage nicht erreicht wird
+
 from machine import Pin
 from time import sleep,sleep_us
 from Sonne import getSEA
@@ -17,8 +19,8 @@ PSU24V    = Pin(12 , Pin.OUT, value=0)
 # Mikroschritt-Modus 2 = 0
 
 micro_step = 4 		#1/4
-ratio      = 1		#gerade kein Getriebe am start
-time_step  = 2500 	#in us
+ratio      = 30		#gerade kein Getriebe am start
+time_step  = 3000 	#in us
 
 def neigen90():
     print("Fahre 90 grad an!")
@@ -121,7 +123,7 @@ def neigen_sonne():
         sleep_us(round(time_step/2))  # Wartezeit vor dem nächsten Schritt
         STEP_PIN.value(0)
         sleep_us(round(time_step/2))  # Wartezeit nach dem Schritt
-        if ini_90geneigt == 1 and DIR_PIN == 1 or ini_0geneigt == 1 and DIR_PIN == 0:
+        if ini_90geneigt.value == 0 and DIR_PIN.value() == 1 or ini_0geneigt.value() == 0 and DIR_PIN.value() == 0:
             print("In Endlage gefahren!")
             break         
     sleep(.5)
@@ -130,7 +132,7 @@ def neigen_sonne():
     print ("auf %i grad geneigt!"%neue_pos)
     with open("tot_pos_neigen.txt","w") as datei:
         datei.write(str(neue_pos))
-
-neigen90()
-neigen0()
-neigen_sonne()
+        
+#neigen90()
+#neigen0()
+#neigen_sonne()
