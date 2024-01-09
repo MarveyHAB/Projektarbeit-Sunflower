@@ -1,3 +1,5 @@
+#ToDo: return false wenn endlage nicht erreicht wird
+
 from machine import Pin
 from time import sleep,sleep_us
 
@@ -72,7 +74,9 @@ def einfaechern():
     sleep(0.5)
     SLEEP_PIN.value(0)
     PSU24V.value(0)
-    print("eingefaechert")        
-
-
+    print("eingefaechert")
+    
+    
+#einfaechern()
+#auffaechern()
 
