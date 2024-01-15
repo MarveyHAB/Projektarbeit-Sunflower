@@ -17,14 +17,13 @@ NOTHALT = allocate_lock()
 ausrichtung_check = Timer()
 
 #BTN
-btn_startstopp    	= Pin(27 , Pin.IN,Pin.PULL_UP)
-btn_ISR_NOTHALT      	= Pin(26 , Pin.IN,Pin.PULL_UP)
-#btn_einfahren     	= Pin(22 , Pin.IN,Pin.PULL_UP)
-ini_ausgefaechert 	= Pin(21 , Pin.IN,Pin.PULL_UP)
+btn_startstopp		= Pin(27 , Pin.IN,Pin.PULL_UP)
+btn_ISR_NOTHALT		= Pin(26 , Pin.IN,Pin.PULL_UP)
+
+fehler				= 0
 ausrichten_freigabe = False
 anlage_ein        	= False
 status_automatik	= False
-fehler				= 0
 anlage_ist_aus		= True
 state_1 			= True  #Einfächern 
 state_2 			= False #
@@ -38,8 +37,8 @@ state_9 			= False
 state_10			= False
 
 #Speicher Positionen
-pos_neigen = 0
-pos_drehen = 0
+pos_neigen 			= 0
+pos_drehen 			= 0
 
 
 
@@ -248,6 +247,7 @@ while True:
                             fehler = 12
                         else fehler == 0:
                             print("Parkposition erreicht")
+                            pos_neigen = rueckgabe_neigen_0[1]
                             state_10 			= False
                             state_8				= True
                             status_automatik 	= False
