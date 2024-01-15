@@ -5,9 +5,9 @@ from sonne_jan			import getAZ, getSEA
 from drehen				import drehen_grundpos, drehen_sonne, drehen_kali
 from neigen				import neigen0, neigen90, neigen_sonne, neigen_kali
 from faechern			import auffaechern, einfaechern, faechern_kali
-from machine			import Pin, RTC, SoftI2C, Timer
+from machine			import Pin, RTC, I2C, Timer
 from time				import sleep, sleep_ms
-from Manuelle Steuerung	import manuel
+#from Manuelle Steuerung	import manuel
 
 #Allocate Lock
 NOTHALT = allocate_lock()
@@ -42,10 +42,10 @@ pos_drehen 			= 0
 
 
 #manuelle verfahrung.
-def second_thread():
-    manuel()
-
-start_new_thread(second_thread, ())
+#def second_thread():
+#    manuel()
+#
+#start_new_thread(second_thread, ())
 #-------------------------------------
 
 def ISR_ausrichtung(abc):
@@ -195,8 +195,8 @@ while True:
             state_9 			= True
             status_automatik 	= True
         else:
-            state_8 = False
-            state_9 = True
+            state_8 			= False
+            state_9 			= True
 
     if state_9 == True and NOTHALT == False and anlage_ein = True and fehler == 0:
         if ausrichten_freigabe == True:
@@ -236,13 +236,13 @@ while True:
             if rueckgabe_neigen_90[0] != 0:
                 fehler = rueckgabe_neigen_90[0]
             else fehler == 0:
-                pos_neigen = rueckgabe_neigen_90[1]
-                rueckgabe_drehen = drehen_grundpos(NOTHALT, pos_drehen)
+                pos_neigen 			= rueckgabe_neigen_90[1]
+                rueckgabe_drehen 	= drehen_grundpos(NOTHALT, pos_drehen)
                 if rueckgabe_drehen[0] =! 0:
                     fehler = rueckgabe_drehen[0]
                 else fehler == 0:
-                    pos_drehen = rueckgabe_drehen[1]
-                    rueckgabe_faechern = einfaechern(NOTHALT)
+                    pos_drehen 			= rueckgabe_drehen[1]
+                    rueckgabe_faechern 	= einfaechern(NOTHALT)
                     if rueckgabe_faechern[0] != 0:
                         fehler = rueckgabe_faechern[0]
                     else fehler == 0:
@@ -251,7 +251,7 @@ while True:
                             fehler = rueckgabe_neigen_0[0]
                         else fehler == 0:
                             print("Parkposition erreicht")
-                            pos_neigen = rueckgabe_neigen_0[1]
+                            pos_neigen 			= rueckgabe_neigen_0[1]
                             state_10 			= False
                             state_8				= True
                             status_automatik 	= False
@@ -265,9 +265,9 @@ while True:
         if fehler == 10:
             print("Fehler Kalibrierung Neigen")
         elif fehler == 11:
-            print("Fehler aufneigen") #c
+            print("Fehler aufneigen")
         elif fehler == 12:
-            print("Fehler zuneigen") #c
+            print("Fehler zuneigen")
         elif fehler == 20:
             print("Fehler Kalibrierung fächern")
         elif fehler == 21:
@@ -280,16 +280,3 @@ while True:
             print("Fehler Drehen")
         else fehler == 41:
             print("Nothalt ausgelöst!")
-
-
-
-    
-            
-            
-    
-        
-    
-
-
-
-
