@@ -1,7 +1,7 @@
 import ds1307
 from hmc5883l			import HMC5883L
 from _thread			import allocate_lock
-from sonne_jan			import getAZ, getSEA
+from Sonne				import getAZ, getSEA
 from drehen				import drehen_grundpos, drehen_sonne, drehen_kali
 from neigen				import neigen0, neigen90, neigen_sonne, neigen_kali
 from faechern			import auffaechern, einfaechern, faechern_kali
