@@ -81,6 +81,7 @@ def ISR_ein_aus(pin22):
         if q == 2:
             print("Fehler wurde quittiert! Anlage kalibriert neu!")
             fehler ==0
+            q = 0
             sleep(2)
             state_1 			= True   
             state_2 			= False 
@@ -105,9 +106,6 @@ def ISR_NOTHALT(pin26):
     NOTHALT.acquire()
     print("NOTHALT Ausgelöst!")
 
-def ISR_ausrichtung(abc):
-    stat_9 = True
-    
 
 btn_startstopp.irq(trigger=Pin.IRQ_FALLING, handler=ISR_ein_aus)
 btn_ISR_NOTHALT.irq(trigger=Pin.IRQ_FALLING, handler=ISR_NOTHALT)
@@ -117,71 +115,77 @@ btn_ISR_NOTHALT.irq(trigger=Pin.IRQ_FALLING, handler=ISR_NOTHALT)
 while True:
     #Wird nur ausgefürt nach Hardreset oder NOTHALT oder Fehler!
     if state_1 == True and NOTHALT == False and anlage_ein = True and fehler == 0:
-            rueckgabe_neigen = neigen_kali(NOTHALT)
-            if rueckgabe[0]== 0:
-                state_1 = False
-                state_2 = True
-                anlage_ist_aus = False
-                pos_neigen = rueckgabe_neigen[1]
-            elif rueckgabe[0] != 0:
-                fehler = rueckgabe[0]
-                analge_ein = False
+        rueckgabe_neigen = neigen_kali(NOTHALT)
+        if rueckgabe[0]!= 0:
+            fehler 			= rueckgabe[0]
+            analge_ein 		= False
+        else:
+            state_1 		= False
+            state_2 		= True
+            anlage_ist_aus 	= False
+            pos_neigen 		= rueckgabe_neigen[1]
                 
-
+                
     if state_2 == True and NOTHALT == False and anlage_ein = True and fehler == 0:
-            if faechern_kali(NOTHALT) == True:
-                state_2 = False
-                state_3 = True
+        if faechern_kali(NOTHALT) != 0:
+            fehler 		= faechern_kali
+            analge_ein 		= False
+        else:
+            state_2 	= False
+            state_3 	= True
     
     if state_3 == True and NOTHALT == False and anlage_ein = True and fehler == 0:
-            rueckgabe_drehen = drehen_kali(NOTHALT)
-            if rueckgabe_drehen[0] == True:
-                state_3 = False
-                state_4 = True
-                pos_drehen = rueckgabe_drehen[1]
+        rueckgabe_drehen = drehen_kali(NOTHALT)
+        if rueckgabe_drehen[0] != 0:
+            fehler 			= rueckgabe_drehen[0]
+            analge_ein 		= False
+        else:
+            state_3 	= False
+            state_4 	= True
+            pos_drehen 	= rueckgabe_drehen[1]
                 
 #Wenn alle in Grundposition kalibriert sind.
     if state_4 == True and NOTHALT == False and anlage_ein = True and fehler == 0:
         rueckgabe_neigen90 = neigen90(NOTHALT, pos_neigen)
-        if  rueckgabe_neigen90[0] == 0:
-            print("Endlage neigen errreicht.")
-            state_4 = False
-            state_5 = True
-            anlage_ist_aus = False
-            pos_neigen = rueckgabe_neigen90[1]
-        else:
+        if  rueckgabe_neigen90[0] != 0:
             fehler = rueckgabe_neigen90[0]
+            anlage_ein 	= False
+        else:
+            state_4 	= False
+            state_5 	= True
+            pos_neigen 	= rueckgabe_neigen90[1]
+            
     
     if state_5 == True and NOTHALT == False and anlage_ein = True and fehler == 0:
         rueckgabe_auffächern = auffaechern(NOTHALT)
         if rueckgabe_auffächern != 0:
-            fehler = rueckgabe_auffächern[0]
-            anlage_ein = False
+            fehler 		= rueckgabe_auffächern
+            anlage_ein 	= False
                 
         else:
-            state_5 = False
-            state_6 = True
+            state_5 	= False
+            state_6 	= True
 
     if state_6 == True and NOTHALT == False and anlage_ein = True and fehler == 0:
         rueckgabe_drehen_sonne = drehen_sonne(NOTHALT, pos_drehen)
         if  rueckgabe_drehen_sonne[0] != 0:
-            fehler = rueckgabe_auffächern[0]
-            anlage_ein = False
+            fehler 		= rueckgabe_drehen_sonne[0]
+            anlage_ein 	= False
         else:
-            state_6 = False
-            state_7 = True
-            pos_drehen = rueckgabe_drehen_sonne[1]
+            state_6 	= False
+            state_7 	= True
+            pos_drehen 	= rueckgabe_drehen_sonne[1]
 
     if state_7 == True and NOTHALT == False and anlage_ein = True and fehler == 0:
         rueckgabe_neigen_sonne = neigen_sonne(NOTHALT, pos_neigen)
         if rueckgabe_neigen_sonne[0] != 0:
-            fehler = rueckgabe_neigen_sonne[0]
-            anlage_ein = False
+            fehler		= rueckgabe_neigen_sonne[0]
+            anlage_ein 	= False
 
         else:
-            state_7 = False
-            state_8 = True
-            pos_neigen = rueckgabe_neigen_sonne[1]
+            state_7 	= False
+            state_8 	= True
+            pos_neigen 	= rueckgabe_neigen_sonne[1]
 
     if state_8 == True and NOTHALT == False and anlage_ein = True and fehler == 0:
         if status_automatik== False:
@@ -200,8 +204,9 @@ while True:
             
             rueckgabe_neigen_sonne = drehen_sonne(NOTHALT, pos_neigen)
             if rueckgabe_neigen_sonne[0] != 0:
-                fehler = rueckgabe_neigen_sonne[0]
-                analage_ein = False
+                fehler 				= rueckgabe_neigen_sonne[0]
+                analage_ein 		= False
+                ausrichten_freigabe	= False
             else:
                 pos_neigen = rueckgabe_neigen_sonne[1]
             
@@ -209,8 +214,9 @@ while True:
                 rueckgabe_drehen_sonne = neigen_sonne(NOTHALT, pos_drehen)
                 
             if rueckgabe_drehen_sonne[0] != 0:
-                fehler = rueckgabe_drehen_sonne[0]
-                analge_ein = False
+                fehler 				= rueckgabe_drehen_sonne[0]
+                analge_ein 			= False
+                ausrichten_freigabe	= False
             else:
                 pos_drehen = rueckgabe_drehen_sonne[1]
                 state_9 			= False
@@ -230,7 +236,7 @@ while True:
             if rueckgabe_neigen_90[0] != 0:
                 fehler = rueckgabe_neigen_90[0]
             else fehler == 0:
-                pos_drehen = rueckgabe_neigen_90[1]
+                pos_neigen = rueckgabe_neigen_90[1]
                 rueckgabe_drehen = drehen_grundpos(NOTHALT, pos_drehen)
                 if rueckgabe_drehen[0] =! 0:
                     fehler = rueckgabe_drehen[0]
@@ -257,23 +263,19 @@ while True:
     
     if fehler != 0:
         if fehler == 10:
-            print("Fehler")
+            print("Fehler Kalibrierung Neigen")
         elif fehler == 11:
-            print("Fehler aufneigen")
+            print("Fehler aufneigen") #c
         elif fehler == 12:
-            print("Fehler zuneigen")
-        elif fehler == 13:
-            print("Fehler")
+            print("Fehler zuneigen") #c
         elif fehler == 20:
-            print("Fehler")
+            print("Fehler Kalibrierung fächern")
         elif fehler == 21:
             print("Fehler auffächern")
         elif fehler == 22:
             print("Fehler zufächern")
-        elif fehler == 23:
-            print("Fehler")
         elif fehler == 30:
-            print("Fehler")
+            print("Fehler Kalibrierung Drehen")
         elif fehler == 31:
             print("Fehler Drehen")
         else fehler == 41:
