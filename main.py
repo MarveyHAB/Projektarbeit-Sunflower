@@ -278,3 +278,16 @@ while True:
             print("Fehler Drehen")
         else fehler == 41:
             print("Nothalt ausgelöst!")
+
+
+
+    
+            
+            
+    
+        
+    
+
+
+
+
