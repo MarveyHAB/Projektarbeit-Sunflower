@@ -5,21 +5,96 @@ from time import sleep,sleep_us
 
 ini_eingefaechert = Pin(20 , Pin.IN,Pin.PULL_UP)
 ini_ausgefaechert = Pin(19 , Pin.IN,Pin.PULL_UP)
+auf               = Pin(22 , Pin.IN,Pin.PULL_UP)
+zu                = Pin(27 , Pin.IN,Pin.PULL_UP)
 # Pins für den DRV8825 Schrittmotor-Treiber
 DIR_PIN   = Pin(8 , Pin.OUT,value =0)  # Richtungs-Pin 1 Uhrzeigersinn
 STEP_PIN  = Pin(9 , Pin.OUT,value =0)  # Schritt-Pin
 SLEEP_PIN = Pin(10, Pin.OUT,value =0)  # Aktivierung des Treibers
 PSU24V = Pin(12 , Pin.OUT, value=0)
 
-#1/4 Step:
-# Mikroschritt-Modus 0 = 0
-# Mikroschritt-Modus 1 = 1
-# Mikroschritt-Modus 2 = 0
 micro_step = 4 #1/4
 ratio      = 30
 time_step  = 1500
 
-def auffaechern():
+#fehler 20 fehler kalibrierung
+def faechern_kali(NOTHALT):
+    return 0
+
+
+def faechern_hand(NOTHALT):
+    
+    while auf.value()==1 or zu.value()==1:
+        
+        first_run_auf   = True
+        schleife_auf    = False
+        first_run_zu = True
+        schleife_zu  = False        
+        
+        #auf Handbetrieb
+        while auf.value()==0 and ini_90geneigt.value()==1 and zu.value()==1:
+            
+            if NOTHALT.locked()== True:
+                break
+            
+            if first_run_auf == True:
+                first_run_auf = False
+                schleife_auf = True
+                viertel_step.value(0)
+                DIR_PIN.value(1) 
+                PSU24V.value(1)
+                SLEEP_PIN.value(1)
+                sleep(.2)
+                
+            STEP_PIN.value(1)
+            sleep_us(round(time_step_auf/2)) 
+            STEP_PIN.value(0)
+            sleep_us(round(time_step_auf/2))
+            if ini_90geneigt.value() == 0:
+                print("Ini 90° geneigt betätigt")
+                break
+            
+        if schleife_auf == True:
+            schleife_auf = False
+            sleep(.1)
+            PSU24V.value(0)
+            SLEEP_PIN.value(0)
+            sleep(.2)
+        
+        #zu Handbetrieb
+        while zu.value()==0 and ini_90geneigt.value()==1 and auf.value()==1:
+            
+            if NOTHALT.locked()== True:
+                break
+            
+            if first_run_zu == True:
+                first_run_zu = False
+                schleife_zu = True
+                viertel_step.value(1)
+                DIR_PIN.value(0) 
+                PSU24V.value(1)
+                SLEEP_PIN.value(1)
+                sleep(.2)
+                
+            STEP_PIN.value(1)
+            sleep_us(round(time_step_zu/2)) 
+            STEP_PIN.value(0)
+            sleep_us(round(time_step_zu/2))
+            if ini_0geneigt.value() == 0:
+                print("Ini 0° geneigt betätigt")
+                break
+            
+        if schleife_zu == True:
+            schleife_zu = False
+            sleep(.1)
+            PSU24V.value(0)
+            SLEEP_PIN.value(0)
+            sleep(.2)
+        
+
+#Fehler 21 fehler auffächern
+def auffaechern(NOTHALT):
+    return 0 #weil fächern nicht getestet werden kann
     print("wird aufgefaechert")
     if ini_eingefaechert.value()==1:
         print ("Unbestimmte Pos und wird deswegen doch nicht aufgefächert")
@@ -47,8 +122,10 @@ def auffaechern():
     SLEEP_PIN.value(0)
     PSU24V.value(0)
     print("aufgefaechert")
-    
-def einfaechern():
+
+#fehler 22 einfächern
+def einfaechern(NOTHALT):
+    return 0 #weil fächern nicht getestet werden kann
     print("wird eingefaechert")
     if ini_ausgefaechert.value()==1:
         print ("Unbestimmte Pos und wird deswegen doch nicht aufgefächert")
