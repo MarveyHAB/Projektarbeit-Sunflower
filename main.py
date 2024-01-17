@@ -1,17 +1,17 @@
 import ds1307
-import sh1106
-from hmc5883l			import HMC5883L
-from _thread			import allocate_lock
-from Sonne				import getAZ, getSEA
-from drehen				import drehen_grundpos, drehen_sonne, drehen_kali
-from neigen				import neigen0, neigen90, neigen_sonne, neigen_kali
-from faechern			import auffaechern, einfaechern, faechern_kali
-from machine			import Pin, RTC, I2C, Timer
-from time				import sleep, sleep_ms
+from sh1106 	import SH1106_I2C
+from hmc5883l	import HMC5883L
+from _thread	import allocate_lock
+from Sonne		import getAZ, getSEA
+from drehen		import drehen_grundpos, drehen_sonne, drehen_kali
+from neigen		import neigen0, neigen90, neigen_sonne, neigen_kali
+from faechern	import auffaechern, einfaechern, faechern_kali
+from machine	import Pin, RTC, I2C, Timer
+from time		import sleep, sleep_ms
 
 #Display
 i2c = I2C(0, scl=Pin(1), sda=Pin(0))
-display = sh1106.SH1106_I2C(128, 64, i2c, Pin(28), 0x3c)
+display = SH1106_I2C(128, 64, i2c, Pin(28), 0x3c)
 
 display.fill(0)
 display.text('Sunflower ', 30, 20, 1)
