@@ -3,10 +3,10 @@ from time       import sleep_us,sleep,sleep_ms
 #from hmc5883l import HMC5883L
 from Sonne      import getAZ
 
-ini_grund_pos= Pin(16 , Pin.IN,Pin.PULL_UP)
-brake     = Pin(11 , Pin.OUT,value =0)
-rechts   = Pin(22 , Pin.IN,Pin.PULL_UP)
-links   = Pin(27 , Pin.IN,Pin.PULL_UP)
+ini_grund_pos	= Pin(16 , Pin.IN,Pin.PULL_UP)
+brake			= Pin(11 , Pin.OUT,value =0)
+rechts			= Pin(22 , Pin.IN,Pin.PULL_UP)
+links			= Pin(27 , Pin.IN,Pin.PULL_UP)
 
 # Pins für den DRV8825 Schrittmotor-Treiber
 DIR_PIN   = Pin(2, Pin.OUT,value =0)  # Richtungs-Pin 1 Uhrzeigersinn
@@ -19,9 +19,13 @@ ratio      = 50		#gerade kein Getriebe am start
 time_step  =2500 	#in us
 grund_pos = 180
 
+#from _thread import allocate_lock
+#NOTHALT = allocate_lock()
 
-#fehler 30 Kalibrieren
+
 def drehen_kali(NOTHALT):
+    
+    dif=0 #testen ob es sein muss
     if ini_grund_pos.value() == 0:
             print ("Ini Drehen Grundpos. angesprochen")
             with open("totale_pos.txt","r") as datei:
@@ -38,12 +42,18 @@ def drehen_kali(NOTHALT):
     
     if abs_pos<180: #dann rechts fahren
         DIR_PIN.value(0) #im Uhrzeigersinn
+        print("rechts rum")
         dif= 180-abs_pos
     
     if abs_pos>180: #dann links fahren
         DIR_PIN.value(1)
+        print ("links rum")
         dif= abs_pos-180
-        
+    
+    #print("Diff  %i" %dif)
+    steps = round(((dif+5)/1.8)*micro_step*ratio)
+    print("Steps: %i"%steps)
+    
     PSU_24V.value(1)
     SLEEP_PIN.value(1)
     brake.value(1)
@@ -63,18 +73,22 @@ def drehen_kali(NOTHALT):
             print ("Ini Drehen Grundpos. angesprochen")
             break
         
-        if NOTHALT.locked()== True:
+    PSU_24V.value(0)
+    SLEEP_PIN.value(0)
+    brake.value(0)
+        
+    if NOTHALT.locked()== True:
         print("Not-Halt hat ausgelöst")
         return 41,999
-        
-        with open("totale_pos.txt","w") as datei:
-            datei.write("180")
-        
-        if ini_grund_pos.value() == 0:
+    
+    with open("totale_pos.txt","w") as datei:
+        datei.write("180")
+    
+    if ini_grund_pos.value() == 0:
         return 0,180
-        else:
-            print("Muss im Handbetrieb angefahren werden, da er die pos. nicht findet.")
-            return 30,180
+    else:
+        print("Muss im Handbetrieb angefahren werden, da er die pos. nicht findet.")
+        return 30,180
         
         
 def drehen_hand(NOTHALT):
@@ -191,13 +205,17 @@ def drehen_grundpos(NOTHALT,pos):
     brake.value(0)
     sleep(.2)
     SLEEP_PIN.value(0)
+    PSU_24V.value(0)
+    
     print("angefahrene Pos. %i"%akt_pos)
     with open("totale_pos.txt","w") as datei:
             datei.write(str(akt_pos))
+    
     if ini_angesprochen == False:
         print("Ini Grundpos. wurde nicht erreicht")
         return 31,180 #anpassen
-    PSU_24V.value(0)
+    
+    return 0,180
 
 
 def drehen_sonne(NOTHALT,pos):
@@ -257,7 +275,7 @@ def drehen_sonne(NOTHALT,pos):
     PSU_24V.value(0)
     return 0,akt_pos
 
-#drehen_sonne()
-#drehen_grundpos()
-
-
+#drehen_sonne(NOTHALT,pos)
+#drehen_grundpos(NOTHALT,pos)
+#drehen_kali(NOTHALT)
+#drehen_hand(NOTHALT)

@@ -10,8 +10,8 @@ from time import sleep,sleep_us
 from Sonne import getSEA
 
 #wieder löschen
-from _thread			import allocate_lock
-NOTHALT = allocate_lock()
+#from _thread			import allocate_lock
+#NOTHALT = allocate_lock()
 
 ini_0geneigt   = Pin(18 , Pin.IN,Pin.PULL_UP)
 ini_90geneigt  = Pin(17 , Pin.IN,Pin.PULL_UP)
@@ -160,7 +160,8 @@ def neigen90(NOTHALT, pos):
 def neigen_sonne(NOTHALT, pos):
 
     print("Fahre Sonnenposition an!")
-
+    print("Pos vor Fahrt: %i",pos)
+    
     sonnen_pos = getSEA(51,7,2)
     #sonnen_pos = round(sonnen_pos)  Kontrollieren
     print("Sonnenhöhe: %i"%sonnen_pos)
@@ -176,21 +177,23 @@ def neigen_sonne(NOTHALT, pos):
         dif = sonnen_pos-pos
         steps = round((dif/1.8)*micro_step_hoch*ratio)
         DIR_PIN.value(1)
+        print("fahre hoch")
         viertel_step.value(0)
         time_step = time_step_hoch
         
     if pos>sonnen_pos: #runter fahren
         dif = pos-sonnen_pos
-        steps = round((dif/1.8)*micro_step_hoch*ratio)    
+        print("Die differenz der pos. beträgt: %i"%dif)
+        steps = round((dif/1.8)*micro_step_runter*ratio)    
         DIR_PIN.value(0)
+        print("fahre runter")
         viertel_step.value(1)
         time_step = time_step_runter
         
     if NOTHALT.locked()== True:
         print("Not-Halt hat ausgelöst")
         return 41,999    
-    
-    DIR_PIN.value(1) 
+     
     PSU24V.value(1)
     SLEEP_PIN.value(1)
     sleep(.2)
@@ -202,8 +205,9 @@ def neigen_sonne(NOTHALT, pos):
         sleep_us(round(time_step/2)) 
         STEP_PIN.value(0)
         sleep_us(round(time_step/2))
-        if ini_90geneigt.value() == 0 or ini_0geneigt.value() == 0:
-            print("Ein Ini geneigt wurde betätigt")
+
+        if ini_0geneigt.value() == 0 and DIR_PIN.value()==0 or ini_90geneigt.value() == 0 and DIR_PIN.value() == 1:
+            print("Eine Endlage Neigen wurde betätigt")
             break
     
     sleep(.2)
@@ -277,7 +281,6 @@ def neigen_hand(NOTHALT, pos):
                 sleep(.5)
                 
             STEP_PIN.value(1)
-            print("steps!!!")
             sleep_us(round(time_step_runter/2)) 
             STEP_PIN.value(0)
             sleep_us(round(time_step_runter/2))
@@ -293,7 +296,7 @@ def neigen_hand(NOTHALT, pos):
             SLEEP_PIN.value(0)
             sleep(.2)
         
-        
+#Endlage wieder hinzufügen!! Hand!        
 #neigen_hand(NOTHALT,0)         
 #neigen90(NOTHALT,0)
 #sleep(1)
@@ -301,4 +304,4 @@ def neigen_hand(NOTHALT, pos):
 #sleep(5)
 #neigen0(NOTHALT,88)
 #neigen_sonne()
-            
+#neigen_kali(NOTHALT)            
