@@ -50,6 +50,9 @@ push_ein_aus_old = 0
 push_nothalt = 0
 push_nothalt_old = 0
 
+i = 0
+q = 0
+
 #Speicher Positionen
 pos_neigen 			= 0
 pos_drehen 			= 0
@@ -61,7 +64,7 @@ def ISR_ausrichtung(abc):
     ausrichten_freigabe = True
 
 def ISR_ein_aus(hallo):
-    global anlage_ein, fehler, NOTHALT, push_ein_aus, push_ein_aus_old
+    global anlage_ein, fehler, NOTHALT, push_ein_aus, push_ein_aus_old, i, q
     push_ein_aus_old = push_ein_aus
     push_ein_aus = ticks_ms()
     
@@ -73,6 +76,7 @@ def ISR_ein_aus(hallo):
             print(i)
             if i == 2:
                 NOTHALT.release()
+                fehler = 0
                 print("Nothalt wurde quittiert! Anlage kalibriert neu!")
                 
                 display.fill(0)
@@ -351,8 +355,8 @@ while True:
                 elif fehler == 0:
                     pos_drehen 			= rueckgabe_drehen[1]
                     rueckgabe_faechern 	= einfaechern(NOTHALT)
-                    if rueckgabe_faechern[0] != 0:
-                        fehler = rueckgabe_faechern[0]
+                    if rueckgabe_faechern != 0:
+                        fehler = rueckgabe_faechern
                     elif fehler == 0:
                         rueckgabe_neigen_0 = neigen0(NOTHALT, pos_neigen)
                         if rueckgabe_neigen_0[0] !=0:
