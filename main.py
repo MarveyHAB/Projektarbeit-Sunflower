@@ -112,7 +112,7 @@ def ISR_ein_aus(hallo):
                 display.text('kalibriert neu!', 0, 30, 1)
                 display.show()
                 
-                fehler ==0
+                fehler = 0
                 q = 0
                 sleep(2)
                 state_1 			= True   
