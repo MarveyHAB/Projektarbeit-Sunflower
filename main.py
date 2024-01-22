@@ -1,3 +1,7 @@
+#TODO
+#RTC abfrage
+#Kompass
+
 import ds1307
 from sh1106 	import SH1106_I2C
 from _thread	import allocate_lock
@@ -23,11 +27,11 @@ NOTHALT = allocate_lock()
 
 #BTN
 btn_startstopp		= Pin(27 , Pin.IN,Pin.PULL_UP)
-btn_ISR_NOTHALT		= Pin(26 , Pin.IN,Pin.PULL_UP)
+btn_NOTHALT		= Pin(26 , Pin.IN,Pin.PULL_UP)
 
 #State
 fehler				= 0
-ausrichten_freigabe = False
+ausrichten_freigabe	= False
 anlage_ein        	= False
 state_1 			= True 
 state_2 			= False 
@@ -41,11 +45,11 @@ state_9 			= False
 state_10			= False
 
 #BTN entprellen
-push_ein_aus = 0
-push_ein_aus_old = 0
+push_ein_aus 		= 0
+push_ein_aus_old 	= 0
 
-push_nothalt = 0
-push_nothalt_old = 0
+push_nothalt 		= 0
+push_nothalt_old 	= 0
 
 i = 0
 q = 0
@@ -80,16 +84,7 @@ def ISR_ein_aus(hallo):
                 
                 i = 0
                 sleep(2)
-                state_1 			= True   
-                state_2 			= False 
-                state_3 			= False
-                state_4 			= False
-                state_5 			= False
-                state_6 			= False
-                state_7 			= False
-                state_8 			= False
-                state_9 			= False
-                state_10			= False
+                state_1 = True   
             
         #Fehler Quittieren
         elif fehler != 0:
@@ -107,31 +102,11 @@ def ISR_ein_aus(hallo):
                 fehler = 0
                 q = 0
                 sleep(2)
-                state_1 			= True   
-                state_2 			= False 
-                state_3 			= False
-                state_4 			= False
-                state_5 			= False
-                state_6 			= False
-                state_7 			= False
-                state_8 			= False
-                state_9 			= False
-                state_10			= False
+                state_1 = True   
 
         else:
             anlage_ein = not anlage_ein
             print(anlage_ein)
-            if anlage_ein == False:
-                state_1 			= False   
-                state_2 			= False 
-                state_3 			= False
-                state_4 			= False
-                state_5 			= False
-                state_6 			= False
-                state_7 			= False
-                state_8 			= False
-                state_9 			= False
-                state_10			= True
 
     
 def ISR_NOTHALT(abcde):
@@ -140,8 +115,18 @@ def ISR_NOTHALT(abcde):
     push_nothalt = ticks_ms()
     
     if push_nothalt - push_nothalt_old > 250:
-        anlage_ein = False
-        fehler = 41
+        anlage_ein	= False
+        fehler 		= 41
+        state_1 	= False   
+        state_2 	= False 
+        state_3 	= False
+        state_4 	= False
+        state_5 	= False
+        state_6 	= False
+        state_7 	= False
+        state_8 	= False
+        state_9 	= False
+        state_10	= False
         
         NOTHALT.acquire()
         
@@ -153,7 +138,7 @@ def ISR_NOTHALT(abcde):
 
 
 btn_startstopp.irq(trigger=Pin.IRQ_RISING, handler=ISR_ein_aus)
-btn_ISR_NOTHALT.irq(trigger=Pin.IRQ_RISING, handler=ISR_NOTHALT)
+btn_NOTHALT.irq(trigger=Pin.IRQ_RISING, handler=ISR_NOTHALT)
 
 
 
@@ -176,7 +161,6 @@ while True:
             state_2 		= True
             anlage_ist_aus 	= False
             pos_neigen 		= rueckgabe_neigen[1]
-                
                 
     if state_2 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0:
         display.fill(0)
@@ -419,3 +403,4 @@ while True:
             display.text('Nothalt'   , 0,  0, 1)
             display.text('betaetigt!', 0, 10, 1)
             display.show()
+
