@@ -3,8 +3,8 @@
 from machine import Pin
 from time import sleep,sleep_us
 
-ini_eingefaechert = Pin(20 , Pin.IN,Pin.PULL_UP)
-ini_ausgefaechert = Pin(19 , Pin.IN,Pin.PULL_UP)
+ini_eingefaechert = Pin(19 , Pin.IN,Pin.PULL_UP)
+ini_ausgefaechert = Pin(20 , Pin.IN,Pin.PULL_UP)
 auf               = Pin(26 , Pin.IN,Pin.PULL_UP)
 zu                = Pin(27 , Pin.IN,Pin.PULL_UP)
 # Pins für den DRV8825 Schrittmotor-Treiber
@@ -151,9 +151,6 @@ def faechern_hand():
         #auf Handbetrieb
         while auf.value()==0 and ini_ausgefaechert.value()==1 and zu.value()==1:
             
-            if NOTHALT.locked()== True:
-                break
-            
             if first_run_auf == True:
                 first_run_auf = False
                 print("auf fächern")
@@ -181,9 +178,6 @@ def faechern_hand():
         #zu Handbetrieb
         while zu.value()==0 and ini_eingefaechert.value()==1 and auf.value()==1:
             
-            if NOTHALT.locked()== True:
-                break
-            
             if first_run_zu == True:
                 first_run_zu = False
                 print("zu fächern")
@@ -207,10 +201,8 @@ def faechern_hand():
             PSU24V.value(0)
             SLEEP_PIN.value(0)
             sleep(.2)
-    return 0    
-    
+
 #einfaechern(NOTHALT)
 #auffaechern(NOTHALT)
 #faechern_hand()
-
 

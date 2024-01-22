@@ -4,8 +4,8 @@ from Sonne      import getAZ
 
 ini_grund_pos	= Pin(16 , Pin.IN,Pin.PULL_UP)
 brake			= Pin(11 , Pin.OUT,value =0)
-rechts			= Pin(22 , Pin.IN,Pin.PULL_UP)
-links			= Pin(27 , Pin.IN,Pin.PULL_UP)
+rechts			= Pin(27 , Pin.IN,Pin.PULL_UP)
+links			= Pin(26 , Pin.IN,Pin.PULL_UP)
 
 # Pins für den DRV8825 Schrittmotor-Treiber
 DIR_PIN   = Pin(2, Pin.OUT,value =0)  # Richtungs-Pin 1 Uhrzeigersinn
@@ -210,24 +210,23 @@ def drehen_sonne(NOTHALT,pos):
 
 
 def drehen_hand():
+    
     while rechts.value()==1 or links.value()==1:
-        
+
         first_run_rechts   = True
         schleife_rechts    = False
         first_run_links = True
         schleife_links  = False        
-        
+
         #rechts Handbetrieb
         while rechts.value()==0 and links.value()==1:
-            
-            if NOTHALT.locked()== True:
-                break
             
             if first_run_rechts == True:
                 first_run_rechts = False
                 schleife_rechts = True
                 DIR_PIN.value(1) 
-                PSU24V.value(1)
+                PSU_24V.value(1)
+                brake.value(1)
                 SLEEP_PIN.value(1)
                 sleep(.2)
                 
@@ -238,22 +237,21 @@ def drehen_hand():
             
         if schleife_rechts == True:
             schleife_rechts = False
-            sleep(.1)
-            PSU24V.value(0)
+            sleep(.2)
+            PSU_24V.value(0)
+            brake.value(0)
             SLEEP_PIN.value(0)
             sleep(.2)
         
         #links Handbetrieb
         while links.value()==0 and rechts.value()==1:
             
-            if NOTHALT.locked()== True:
-                break
-            
             if first_run_links == True:
                 first_run_links = False
                 schleife_links = True
                 DIR_PIN.value(0) 
-                PSU24V.value(1)
+                PSU_24V.value(1)
+                brake.value(1)
                 SLEEP_PIN.value(1)
                 sleep(.2)
                 
@@ -265,13 +263,75 @@ def drehen_hand():
         if schleife_links == True:
             schleife_links = False
             sleep(.1)
-            PSU24V.value(0)
+            PSU_24V.value(0)
+            brake.value(0)
             SLEEP_PIN.value(0)
             sleep(.2)
     return 0
-
+"""
+    while hoch.value()==1 or runter.value()==1:
+        first_run_hoch   = True
+        schleife_hoch    = False
+        first_run_runter = True
+        schleife_runter  = False        
+        
+        #Hoch Handbetrieb
+        while hoch.value()==0 and ini_90geneigt.value()==1 and runter.value()==1:
+            
+            if first_run_hoch == True:
+                first_run_hoch = False
+                schleife_hoch = True
+                viertel_step.value(0)
+                DIR_PIN.value(1) 
+                PSU24V.value(1)
+                SLEEP_PIN.value(1)
+                sleep(.2)
+                
+            STEP_PIN.value(1)
+            sleep_us(round(time_step_hoch/2)) 
+            STEP_PIN.value(0)
+            sleep_us(round(time_step_hoch/2))
+            if ini_90geneigt.value() == 0:
+                print("Ini 90° geneigt betätigt")
+                break
+            
+        if schleife_hoch == True:
+            schleife_hoch = False
+            sleep(.1)
+            PSU24V.value(0)
+            SLEEP_PIN.value(0)
+            sleep(.2)
+        
+        #Runter Handbetrieb
+        while runter.value()==0 and ini_0geneigt.value()==1 and hoch.value()==1:
+            
+            if first_run_runter == True:
+                first_run_runter = False
+                schleife_runter = True
+                viertel_step.value(1)
+                DIR_PIN.value(0) 
+                PSU24V.value(1)
+                print("spannung an")
+                SLEEP_PIN.value(1)
+                sleep(.5)
+                
+            STEP_PIN.value(1)
+            sleep_us(round(time_step_runter/2)) 
+            STEP_PIN.value(0)
+            sleep_us(round(time_step_runter/2))
+            if ini_0geneigt.value() == 0:
+                print("Ini 0° geneigt betätigt")
+                break
+            
+        if schleife_runter == True:
+            schleife_runter = False
+            sleep(.1)
+            PSU24V.value(0)
+            print("spannung weg genommen")
+            SLEEP_PIN.value(0)
+            sleep(.2)
+"""        
 #drehen_sonne(NOTHALT,pos)
 #drehen_grundpos(NOTHALT,pos)
 #drehen_kali(NOTHALT)
-#drehen_hand(NOTHALT)
-
+#drehen_hand()

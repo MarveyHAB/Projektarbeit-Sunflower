@@ -1,7 +1,7 @@
 #ToDo: return false wenn endlage nicht erreicht wird
        
 """
-die Pos. wird in grad übergeben
+die Pos. wir in grad übergeben
 
 """
 
@@ -13,7 +13,7 @@ from Sonne import getSEA
 ini_0geneigt   = Pin(18 , Pin.IN,Pin.PULL_UP)
 ini_90geneigt  = Pin(17 , Pin.IN,Pin.PULL_UP)
 
-hoch   = Pin(27 , Pin.IN,Pin.PULL_UP)
+hoch     = Pin(27 , Pin.IN,Pin.PULL_UP)
 runter   = Pin(26 , Pin.IN,Pin.PULL_UP)
 
 # Pins für den DRV8825 Schrittmotor-Treiber
@@ -242,12 +242,9 @@ def neigen_hand():
         schleife_hoch    = False
         first_run_runter = True
         schleife_runter  = False        
-        
+        print(runter.value())
         #Hoch Handbetrieb
         while hoch.value()==0 and ini_90geneigt.value()==1 and runter.value()==1:
-            
-            if NOTHALT.locked()== True:
-                break
             
             if first_run_hoch == True:
                 first_run_hoch = False
@@ -276,9 +273,6 @@ def neigen_hand():
         #Runter Handbetrieb
         while runter.value()==0 and ini_0geneigt.value()==1 and hoch.value()==1:
             
-            if NOTHALT.locked()== True:
-                break
-            
             if first_run_runter == True:
                 first_run_runter = False
                 schleife_runter = True
@@ -299,14 +293,14 @@ def neigen_hand():
             
         if schleife_runter == True:
             schleife_runter = False
-            sleep(.1)
+            sleep(.2)
             PSU24V.value(0)
             print("spannung weg genommen")
             SLEEP_PIN.value(0)
             sleep(.2)
         
 #Endlage wieder hinzufügen!! Hand!        
-#neigen_hand(NOTHALT,0)         
+#neigen_hand()         
 #neigen90(NOTHALT,0)
 #sleep(1)
 #neigen_sonne(NOTHALT,90)
@@ -314,4 +308,3 @@ def neigen_hand():
 #neigen0(NOTHALT,88)
 #neigen_sonne()
 #neigen_kali(NOTHALT)            
-
