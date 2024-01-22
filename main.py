@@ -21,9 +21,6 @@ display.show()
 #Allocate Lock
 NOTHALT = allocate_lock()
 
-#Timer
-ausrichtung_check = Timer()
-
 #BTN
 btn_startstopp		= Pin(27 , Pin.IN,Pin.PULL_UP)
 btn_ISR_NOTHALT		= Pin(26 , Pin.IN,Pin.PULL_UP)
@@ -31,7 +28,6 @@ btn_ISR_NOTHALT		= Pin(26 , Pin.IN,Pin.PULL_UP)
 fehler				= 0
 ausrichten_freigabe = False
 anlage_ein        	= False
-status_automatik	= False
 anlage_ist_aus		= True
 state_1 			= True 
 state_2 			= False 
@@ -58,17 +54,12 @@ pos_neigen 			= 0
 pos_drehen 			= 0
 
 
-def ISR_ausrichtung(abc):
-    global state_9, ausrichten_freigabe
-    stat_9 				= True
-    ausrichten_freigabe = True
-
 def ISR_ein_aus(hallo):
     global anlage_ein, fehler, NOTHALT, push_ein_aus, push_ein_aus_old, i, q
     push_ein_aus_old = push_ein_aus
     push_ein_aus = ticks_ms()
     
-    if push_ein_aus - push_ein_aus_old >= 500:
+    if push_ein_aus - push_ein_aus_old > 250:
         
         #Nothalt Quittieren
         if NOTHALT.locked() == True:
@@ -147,10 +138,9 @@ def ISR_NOTHALT(abcde):
     push_nothalt_old = push_nothalt
     push_nothalt = ticks_ms()
     
-    if push_nothalt - push_nothalt_old >= 100:
+    if push_nothalt - push_nothalt_old > 250:
             
         anlage_ein = False
-        ausrichtung_check.deinit()
         fehler = 41
         
         NOTHALT.acquire()
@@ -272,37 +262,34 @@ while True:
             anlage_ein 	= False
 
         else:
-            state_7 	= False
-            state_8 	= True
-            pos_neigen 	= rueckgabe_neigen_sonne[1]
+            state_7 			= False
+            state_8 			= True
+            pos_neigen 			= rueckgabe_neigen_sonne[1]
+            zeit_alt 			= ticks_ms()
 
     if state_8 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0:
+        zeit_neu = ticks_ms()
+        wartezeit = (120000 - (zeit_neu - zeit_alt)) / 1000
+        
         display.fill(0)
-        display.text('State 8', 0, 0, 1)
+        display.text('Zeit bis', 0,  0, 1)
+        display.text('automitischer'   , 0, 10, 1)
+        display.text('ausrichtung: %is.' %wartezeit  , 0, 20, 1)
         display.show()
-        if status_automatik== False:
-            ausrichtung_check.init(period=10000 , mode=Timer.PERIODIC, callback=ISR_ausrichtung)
-            print("Automatik Betrieb aktiviert!")
-            display.fill(0)
-            display.text('Sunflower', 0,  0, 1)
-            display.text('Automatikbetrieb'   , 0, 10, 1)
-            display.text('aktiviert.'  , 0, 20, 1)
-            display.show()
+        
+        if zeit_neu - zeit_alt >= 120000:
+            zeit_alt			= zeit_neu
             state_8 			= False
             state_9 			= True
-            status_automatik 	= True
+            ausrichten_freigabe = True
+
         else:
             state_8 			= False
             state_9 			= True
-    else:
-        state_8 			= False
-        state_9 			= True
 
     if state_9 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0:
-        display.fill(0)
-        display.text('State 9', 0, 0, 1)
-        display.show()
         if ausrichten_freigabe == True:
+            ausrichten_freigabe = False
             print("Automatische Ausrichtung.")
             display.fill(0)
             display.text('Sunflower wird.', 0,  0, 1)
@@ -314,7 +301,6 @@ while True:
             if rueckgabe_neigen_sonne[0] != 0:
                 fehler 				= rueckgabe_neigen_sonne[0]
                 analage_ein 		= False
-                ausrichten_freigabe	= False
             else:
                 pos_neigen = rueckgabe_neigen_sonne[1]
             
@@ -324,15 +310,13 @@ while True:
             if rueckgabe_drehen_sonne[0] != 0:
                 fehler 				= rueckgabe_drehen_sonne[0]
                 analge_ein 			= False
-                ausrichten_freigabe	= False
             else:
                 pos_drehen = rueckgabe_drehen_sonne[1]
                 state_9 			= False
                 state_10 			= True
-                ausrichten_freigabe	= False
-    else:
-        state_9 			= False
-        state_10 			= True
+        else:
+            state_9 			= False
+            state_10 			= True
 
     #Ausschalten    
     if state_10 == True and NOTHALT.locked() == False and anlage_ein == False and fehler == 0:
@@ -342,7 +326,6 @@ while True:
             display.text('ausgeschalten.' , 0, 10, 1)
             display.show()
             print("SunFlower wird ausgeschalten.")
-            ausrichtung_check.deinit()
             
             rueckgabe_neigen_90 = neigen90(NOTHALT, pos_neigen)
             if rueckgabe_neigen_90[0] != 0:
@@ -370,7 +353,6 @@ while True:
                             pos_neigen 			= rueckgabe_neigen_0[1]
                             state_10 			= False
                             state_8				= True
-                            status_automatik 	= False
                             anlage_ist_aus		= True
                             
     else:
