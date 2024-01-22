@@ -1,15 +1,17 @@
-from machine import Pin, SoftI2C, RTC
+from machine import Pin, I2C, RTC
+from time import localtime
 # from machine import Pin, I2C
 import ds1307
 import time
 
+zeit = localtime()
 
 # full test code
-i2c0 = SoftI2C(scl=Pin(1), sda=Pin(0), freq=100000)
-# i2c0 = I2C(0, scl=Pin(1), sda=Pin(0), freq=100000)
-ds1307rtc = ds1307.DS1307(i2c0, 0x68)
+i2c 	= I2C(0, scl=Pin(1), sda=Pin(0))
+#i2c0 = SoftI2C(scl=Pin(1), sda=Pin(0))
+ds1307rtc = ds1307.DS1307(i2c, 0x68)
 
-print(dir(ds1307rtc))
+#print(dir(ds1307rtc))
 
 # set and read disable_osclator property 
 ds1307rtc.disable_oscillator = True
@@ -21,7 +23,8 @@ print("date time and weekday from DS1307")
 print(ds1307rtc.datetime,"\n")
 
 # set time (year, month, day, hours. minutes, seconds, weekday: integer: 0-6 )
-ds1307rtc.datetime = (2023, 10, 09, 11, 21, 30, 6, None)
+zeit = localtime()
+ds1307rtc.datetime = (zeit[0], zeit[1], zeit[2], zeit[3] , zeit[4], zeit[5], zeit[6], None)
 
 # read time
 dt = ds1307rtc.datetime
