@@ -5,7 +5,6 @@
 import ds1307
 from sh1106 	import SH1106_I2C
 from _thread	import allocate_lock
-from Sonne		import getAZ, getSEA
 from drehen_ohne_kompass		import drehen_grundpos, drehen_sonne, drehen_kali
 from neigen		import neigen0, neigen90, neigen_sonne, neigen_kali
 from faechern	import auffaechern, einfaechern, faechern_kali
