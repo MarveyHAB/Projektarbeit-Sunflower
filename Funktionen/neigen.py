@@ -1,7 +1,7 @@
 #ToDo: return false wenn endlage nicht erreicht wird
        
 """
-die Pos. wir in grad übergeben
+die Pos. wird in grad übergeben
 
 """
 
@@ -9,9 +9,6 @@ from machine import Pin
 from time import sleep,sleep_us
 from Sonne import getSEA
 
-#wieder löschen
-#from _thread			import allocate_lock
-#NOTHALT = allocate_lock()
 
 ini_0geneigt   = Pin(18 , Pin.IN,Pin.PULL_UP)
 ini_90geneigt  = Pin(17 , Pin.IN,Pin.PULL_UP)
@@ -31,6 +28,8 @@ micro_step_hoch   = 1		#Full Step!
 ratio             = 30		
 time_step_runter  = 2500 	#in us
 time_step_hoch 	  = 5000	#in us
+
+grundpos=12 #in °
 
 max_steps_hoch  = round((90/1.8)*micro_step_hoch*ratio)
 max_steps_runter= round((90/1.8)*micro_step_runter*ratio)
@@ -75,19 +74,19 @@ def neigen_kali(NOTHALT):
 def neigen0(NOTHALT,pos):
     
     if ini_0geneigt.value() == 0:
-        print("0° ist bereits angefahren!")
-        return 0, 0
+        print("Grundpos: %i° ist bereits angefahren!"%grundpos)
+        return 0, grundpos
     
-    print("Fahre 0° an!")
-
+    print("Fahre Grundpos an!")
+    
     #+3 grad damit Endlage safe angesprochen wird und Toleranzen ausgeglichen werden
-    steps = round((pos/1.8)*micro_step_runter*ratio) #Schritte berechnen
+    steps = round((pos+3-grundpos/1.8)*micro_step_runter*ratio) #Schritte berechnen
     
     DIR_PIN.value(0)
     viertel_step.value(1)
     PSU24V.value(1)
     SLEEP_PIN.value(1)
-    sleep(.2)
+    sleep(.5)
     
     for _ in range(steps):
         if NOTHALT.locked()== True:
@@ -97,10 +96,10 @@ def neigen0(NOTHALT,pos):
         STEP_PIN.value(0)
         sleep_us(round(time_step_runter/2))
         if ini_0geneigt.value() == 0:
-            print("Ini 0° geneigt betätigt")
+            print("Ini Grundpos geneigt betätigt")
             break
     
-    sleep(.2)
+    sleep(.5)
     PSU24V.value(0)
     SLEEP_PIN.value(0)
     
@@ -109,11 +108,12 @@ def neigen0(NOTHALT,pos):
         return 41,999
     
     if ini_0geneigt.value() == 0:
-        return 0,0
+        return 0,grundpos
     else:
+        print("hat Ini Grundpos nicht erreicht, muss von Hand angefahren werden")
         return 12,999
 
-#über 90 grad fahren!
+
 def neigen90(NOTHALT, pos):
     
     if ini_90geneigt.value() == 0:
@@ -125,7 +125,7 @@ def neigen90(NOTHALT, pos):
     #+3 grad damit Endlage safe angesprochen wird und Toleranzen ausgeglichen werden
     dif = 90 - pos
     steps = round((dif+3/1.8)*micro_step_hoch*ratio) #Schritte berechnen
-    print(steps)
+    
     DIR_PIN.value(1)
     viertel_step.value(0)
     PSU24V.value(1)
@@ -154,6 +154,7 @@ def neigen90(NOTHALT, pos):
     if ini_90geneigt.value() == 0:
         return 0,90
     else:
+        print("hat Ini 90° nicht erreicht, muss von Hand angefahren werden")
         return 11,999       
     
     
@@ -168,6 +169,10 @@ def neigen_sonne(NOTHALT, pos):
     if sonnen_pos < 0:
         print("die Sonne ist noch nicht aufgegangen")
         return 0,pos
+    
+    if sonnen_pos<grundpos:
+        print("Sonenpos. kleiner Grundpos deshalb fahre auf Grundpos.")
+        sonnen_pos = grundpos
     
     if pos+1<sonnen_pos or pos-1<sonnen_pos:
         print("Steht noch +-1 in Sonnenposition")
@@ -220,13 +225,17 @@ def neigen_sonne(NOTHALT, pos):
     
     if ini_90geneigt.value() == 0:
         return 10,90
+    
+    if ini_0geneigt.value() == 0 and sonnenpos<=grundpos+2: #+2 um Tolernaz auszugleichen
+        return 0,grundpos
+    
     if ini_0geneigt.value() == 0:
-        return 10,0
+        return 10,grundpos
     
     return 0,sonnen_pos #wenn alles gut ist
 
 
-def neigen_hand(NOTHALT, pos):
+def neigen_hand():
     
     while not(hoch.value()==0 and runter.value()==0):
         first_run_hoch   = True
@@ -305,3 +314,4 @@ def neigen_hand(NOTHALT, pos):
 #neigen0(NOTHALT,88)
 #neigen_sonne()
 #neigen_kali(NOTHALT)            
+
