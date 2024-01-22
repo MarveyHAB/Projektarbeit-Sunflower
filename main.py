@@ -9,8 +9,8 @@ from machine	import Pin, RTC, I2C, Timer
 from time		import sleep, sleep_ms, ticks_ms
 
 #Display
-i2c = I2C(0, scl=Pin(1), sda=Pin(0))
-display = SH1106_I2C(128, 64, i2c, Pin(28), 0x3c)
+i2c 	= I2C(0, scl=Pin(1), sda=Pin(0))
+display	= SH1106_I2C(128, 64, i2c, Pin(28), 0x3c)
 
 display.sleep(False)
 display.fill(0)
@@ -25,10 +25,10 @@ NOTHALT = allocate_lock()
 btn_startstopp		= Pin(27 , Pin.IN,Pin.PULL_UP)
 btn_ISR_NOTHALT		= Pin(26 , Pin.IN,Pin.PULL_UP)
 
+#State
 fehler				= 0
 ausrichten_freigabe = False
 anlage_ein        	= False
-anlage_ist_aus		= True
 state_1 			= True 
 state_2 			= False 
 state_3 			= False
@@ -40,6 +40,7 @@ state_8 			= False
 state_9 			= False
 state_10			= False
 
+#BTN entprellen
 push_ein_aus = 0
 push_ein_aus_old = 0
 
@@ -139,7 +140,6 @@ def ISR_NOTHALT(abcde):
     push_nothalt = ticks_ms()
     
     if push_nothalt - push_nothalt_old > 250:
-            
         anlage_ein = False
         fehler = 41
         
@@ -158,7 +158,6 @@ btn_ISR_NOTHALT.irq(trigger=Pin.IRQ_RISING, handler=ISR_NOTHALT)
 
 
 while True:
-
     sleep(.2)
 
     #Wird nur ausgefürt nach Hardreset oder NOTHALT oder Fehler!
@@ -186,7 +185,8 @@ while True:
         display.show()
         if faechern_kali(NOTHALT) != 0:
             fehler 		= faechern_kali
-            analge_ein 		= False
+            analge_ein 	= False
+            state_2 	= False
         else:
             state_2 	= False
             state_3 	= True
@@ -198,8 +198,9 @@ while True:
         display.show()
         rueckgabe_drehen = drehen_kali(NOTHALT)
         if rueckgabe_drehen[0] != 0:
-            fehler 			= rueckgabe_drehen[0]
-            analge_ein 		= False
+            fehler 		= rueckgabe_drehen[0]
+            analge_ein 	= False
+            state_3 	= False
             #print("drehen mit fehler")
         else:
             state_3 	= False
@@ -217,6 +218,7 @@ while True:
         if  rueckgabe_neigen90[0] != 0:
             fehler = rueckgabe_neigen90[0]
             anlage_ein 	= False
+            state_4 	= False
         else:
             state_4 	= False
             state_5 	= True
@@ -231,6 +233,7 @@ while True:
         if rueckgabe_auffächern != 0:
             fehler 		= rueckgabe_auffächern
             anlage_ein 	= False
+            state_5 	= False
             print("Fächern mit fehler")
             print(fehler)
                 
@@ -247,6 +250,7 @@ while True:
         if  rueckgabe_drehen_sonne[0] != 0:
             fehler 		= rueckgabe_drehen_sonne[0]
             anlage_ein 	= False
+            state_6 	= False
         else:
             state_6 	= False
             state_7 	= True
@@ -260,12 +264,13 @@ while True:
         if rueckgabe_neigen_sonne[0] != 0:
             fehler		= rueckgabe_neigen_sonne[0]
             anlage_ein 	= False
+            state_7 	= False
 
         else:
-            state_7 			= False
-            state_8 			= True
-            pos_neigen 			= rueckgabe_neigen_sonne[1]
-            zeit_alt 			= ticks_ms()
+            state_7 	= False
+            state_8 	= True
+            pos_neigen 	= rueckgabe_neigen_sonne[1]
+            zeit_alt 	= ticks_ms()
 
     if state_8 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0:
         zeit_neu = ticks_ms()
@@ -299,8 +304,9 @@ while True:
             
             rueckgabe_neigen_sonne = neigen_sonne(NOTHALT, pos_neigen)
             if rueckgabe_neigen_sonne[0] != 0:
-                fehler 				= rueckgabe_neigen_sonne[0]
-                analage_ein 		= False
+                fehler 		= rueckgabe_neigen_sonne[0]
+                analage_ein	= False
+                state_9 	= False
             else:
                 pos_neigen = rueckgabe_neigen_sonne[1]
             
@@ -308,8 +314,9 @@ while True:
                 rueckgabe_drehen_sonne = drehen_sonne(NOTHALT, pos_drehen)
                 
             if rueckgabe_drehen_sonne[0] != 0:
-                fehler 				= rueckgabe_drehen_sonne[0]
-                analge_ein 			= False
+                fehler 		= rueckgabe_drehen_sonne[0]
+                analge_ein 	= False
+                state_9 	= False
             else:
                 pos_drehen = rueckgabe_drehen_sonne[1]
                 state_9 			= False
@@ -320,40 +327,38 @@ while True:
 
     #Ausschalten    
     if state_10 == True and NOTHALT.locked() == False and anlage_ein == False and fehler == 0:
-        if anlage_ist_aus == False:
-            display.fill(0)
-            display.text('Sunflower wird.', 0,  0, 1)
-            display.text('ausgeschalten.' , 0, 10, 1)
-            display.show()
-            print("SunFlower wird ausgeschalten.")
-            
-            rueckgabe_neigen_90 = neigen90(NOTHALT, pos_neigen)
-            if rueckgabe_neigen_90[0] != 0:
-                fehler = rueckgabe_neigen_90[0]
+        display.fill(0)
+        display.text('Sunflower wird.', 0,  0, 1)
+        display.text('ausgeschalten.' , 0, 10, 1)
+        display.show()
+        print("SunFlower wird ausgeschalten.")
+        
+        rueckgabe_neigen_90 = neigen90(NOTHALT, pos_neigen)
+        if rueckgabe_neigen_90[0] != 0:
+            fehler = rueckgabe_neigen_90[0]
+        elif fehler == 0:
+            pos_neigen 			= rueckgabe_neigen_90[1]
+            rueckgabe_drehen 	= drehen_grundpos(NOTHALT, pos_drehen)
+            if rueckgabe_drehen[0] != 0:
+                fehler = rueckgabe_drehen[0]
             elif fehler == 0:
-                pos_neigen 			= rueckgabe_neigen_90[1]
-                rueckgabe_drehen 	= drehen_grundpos(NOTHALT, pos_drehen)
-                if rueckgabe_drehen[0] != 0:
-                    fehler = rueckgabe_drehen[0]
+                pos_drehen 			= rueckgabe_drehen[1]
+                rueckgabe_faechern 	= einfaechern(NOTHALT)
+                if rueckgabe_faechern != 0:
+                    fehler = rueckgabe_faechern
                 elif fehler == 0:
-                    pos_drehen 			= rueckgabe_drehen[1]
-                    rueckgabe_faechern 	= einfaechern(NOTHALT)
-                    if rueckgabe_faechern != 0:
-                        fehler = rueckgabe_faechern
+                    rueckgabe_neigen_0 = neigen0(NOTHALT, pos_neigen)
+                    if rueckgabe_neigen_0[0] !=0:
+                        fehler = rueckgabe_neigen_0[0]
                     elif fehler == 0:
-                        rueckgabe_neigen_0 = neigen0(NOTHALT, pos_neigen)
-                        if rueckgabe_neigen_0[0] !=0:
-                            fehler = rueckgabe_neigen_0[0]
-                        elif fehler == 0:
-                            print("Parkposition erreicht")
-                            display.fill(0)
-                            display.text('Parkposition', 0,  0, 1)
-                            display.text('erreicht'    , 0, 10, 1)
-                            display.show()
-                            pos_neigen 			= rueckgabe_neigen_0[1]
-                            state_10 			= False
-                            state_8				= True
-                            anlage_ist_aus		= True
+                        print("Parkposition erreicht")
+                        display.fill(0)
+                        display.text('Parkposition', 0,  0, 1)
+                        display.text('erreicht'    , 0, 10, 1)
+                        display.show()
+                        pos_neigen 			= rueckgabe_neigen_0[1]
+                        state_10 			= False
+                        state_8				= True
                             
     else:
         state_10 			= False
@@ -414,4 +419,3 @@ while True:
             display.text('Nothalt'   , 0,  0, 1)
             display.text('betaetigt!', 0, 10, 1)
             display.show()
-
