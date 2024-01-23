@@ -1,5 +1,3 @@
-#ToDo: return false wenn endlage nicht erreicht wird
-
 from machine import Pin
 from time import sleep,sleep_us
 
@@ -14,6 +12,9 @@ SLEEP_PIN = Pin(10, Pin.OUT,value =0)  # Aktivierung des Treibers
 PSU24V = Pin(12 , Pin.OUT, value=0)
 
 #muss 315° fächern
+#from _thread	import allocate_lock
+#NOTHALT = allocate_lock()
+
 
 micro_step = 4 #1/4
 ratio      = 30
@@ -21,7 +22,7 @@ time_step  = 1500
 
 
 def faechern_kali(NOTHALT):
-    return 0 #weil fächern nicht getestet werden kann
+    
     print("wird aufgefaechert")
     
     if ini_ausgefaechert.value() == 0:
@@ -34,7 +35,6 @@ def faechern_kali(NOTHALT):
     SLEEP_PIN.value(1)
     PSU24V.value(1)
     sleep(.5)
-    steps=500 #wieder rausnehmen mit inis
     
     for _ in range(steps):
         if NOTHALT.locked()== True:
@@ -64,7 +64,7 @@ def faechern_kali(NOTHALT):
 
 
 def auffaechern(NOTHALT):
-    return 0 #weil fächern nicht getestet werden kann
+    
     print("wird aufgefaechert")
     
     steps = round((318/1.8)*micro_step*ratio)# Eigentlich 315° Fächern +3 für Toleranz
@@ -73,7 +73,6 @@ def auffaechern(NOTHALT):
     SLEEP_PIN.value(1)
     PSU24V.value(1)
     sleep(.5)
-    steps=500 #wieder rausnehmen mit inis
     
     for _ in range(steps):
         if NOTHALT.locked()== True:
@@ -102,7 +101,7 @@ def auffaechern(NOTHALT):
     
 
 def einfaechern(NOTHALT):
-    return 0 #weil fächern nicht getestet werden kann
+    
     print("wird eingefaechert")
     
     DIR_PIN.value(1)
@@ -111,7 +110,7 @@ def einfaechern(NOTHALT):
     SLEEP_PIN.value(1)
     PSU24V.value(1)
     sleep(.5)
-    steps=150 #noch loeschen
+    
     for _ in range(steps):
         if NOTHALT.locked()== True:
             break
@@ -204,5 +203,7 @@ def faechern_hand():
 
 #einfaechern(NOTHALT)
 #auffaechern(NOTHALT)
+#faechern_kali(NOTHALT)
 #faechern_hand()
+
 
