@@ -9,7 +9,7 @@ from machine	import Pin, RTC, I2C, Timer
 from time		import sleep, sleep_ms, ticks_ms
 from RTC 		import sync_RTC_Pico_time
 from Sonne 		import getSEA # <0 Sonne nicht aufgegangen #sonnen_pos = getSEA(51,7,2)
-from errorcode	import fehler
+from errorcode	import fehlermeldung
 #Zeit mit RTC sync
 sync_RTC_Pico_time()
 
@@ -151,7 +151,6 @@ btn_NOTHALT.irq(trigger=Pin.IRQ_RISING, handler=ISR_NOTHALT)
 
 while True:
     sleep(.2)
-    print("bin in schleife")
     #Wird nur ausgefürt nach Hardreset oder NOTHALT oder Fehler!
     if state_1 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0:
         display.fill(0)
@@ -204,10 +203,10 @@ while True:
                 state_10 	= True
                 
 #Wenn alle in Grundposition kalibriert sind.
-    if state_4 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0:
+    if state_4 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
         display.fill(0)
         display.text('Neigen zum ', 0,  0, 1)
-        display.text('Nauffaechern', 0, 10, 1)
+        display.text('Auffaechern', 0, 10, 1)
         display.show()
         rueckgabe_neigen90 = neigen90(NOTHALT, pos_neigen)
         if  rueckgabe_neigen90[0] != 0:
@@ -218,9 +217,12 @@ while True:
             state_4 	= False
             state_5 	= True
             pos_neigen 	= rueckgabe_neigen90[1]
+    elif state_4 == True and sonnen_pos >0:
+        state_4  = False
+        state_10 = True
             
     
-    if state_5 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0:
+    if state_5 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
         display.fill(0)
         display.text('Auffaechern', 0, 0, 1)
         display.show()
@@ -237,7 +239,7 @@ while True:
             state_6 	= True
             print("Fächern ohne fehler")
 
-    if state_6 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0:
+    if state_6 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
         display.fill(0)
         display.text('Drehen Sonne', 0, 0, 1)
         display.show()
@@ -251,7 +253,7 @@ while True:
             state_7 	= True
             pos_drehen 	= rueckgabe_drehen_sonne[1]
 
-    if state_7 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0:
+    if state_7 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
         display.fill(0)
         display.text('Neigen Sonne', 0, 0, 1)
         display.show()
@@ -267,10 +269,10 @@ while True:
             pos_neigen 	= rueckgabe_neigen_sonne[1]
             zeit_alt 	= ticks_ms()
 
-    if state_8 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0:
+    if state_8 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
         print("state 8")
         zeit_neu = ticks_ms()
-        wartezeit = (120000 - (zeit_neu - zeit_alt)) / 1000
+        wartezeit = (10000 - (zeit_neu - zeit_alt)) / 1000
         
         display.fill(0)
         display.text('Zeit bis', 0,  0, 1)
@@ -278,7 +280,7 @@ while True:
         display.text('ausrichtung: %is.' %wartezeit  , 0, 20, 1)
         display.show()
         
-        if zeit_neu - zeit_alt >= 120000:
+        if zeit_neu - zeit_alt >= 10000:
             zeit_alt			= zeit_neu
             state_8 			= False
             state_9 			= True
@@ -288,7 +290,7 @@ while True:
             state_8 			= False
             state_9 			= True
 
-    if state_9 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0:
+    if state_9 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
         print("state 9")
         if ausrichten_freigabe == True:
             ausrichten_freigabe = False
@@ -321,11 +323,14 @@ while True:
         else:
             state_9 			= False
             state_10 			= True
-            print("Ende state 9")
+
+    else:
+        state_9 			= False
+        state_10 			= True
 
     #Ausschalten    
     if state_10 == True and NOTHALT.locked() == False and fehler == 0:
-        if anlage_ein == False or sonnen_pos <0:
+        if (anlage_ein == False or sonnen_pos <0) and anlage_ist_aus == False:
             if anlage_ein == False:
                 display.fill(0)
                 display.text('Sunflower wird', 0,  0, 1)
@@ -367,19 +372,11 @@ while True:
                             state_4			= True
                             anlage_ist_aus 	= True
                             
-        else:
+        elif anlage_ein == True:
             state_8  = True
             state_10 = False
             print("state 10 else")
     
-    print(state_8)
-    print(state_9)
-    print(state_10)
-    
-    
     if fehler != 0:
-        fehler(fehler)
-
-
-
+        fehlermeldung(fehler)
 
