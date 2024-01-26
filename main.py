@@ -10,13 +10,14 @@ from time		import sleep, sleep_ms, ticks_ms
 from RTC 		import sync_RTC_Pico_time
 from Sonne 		import getSEA
 from errorcode	import fehlermeldung
+from kompass import QMC5883L
 #Zeit mit RTC sync
 sync_RTC_Pico_time()
 
 #Display
 i2c 	= I2C(0, scl=Pin(1), sda=Pin(0))
 display	= SH1106_I2C(128, 64, i2c, Pin(28), 0x3c)
-kompass=QMC5883L(i2c,OSR=OSR512,ORate=ORate200,FScale=FScale2) #Kompass
+kompass=QMC5883L(i2c) #Kompass
 
 display.sleep(False)
 display.fill(0)
@@ -189,8 +190,8 @@ while True:
                 state_3 	= False
                 state_4 	= True
                 pos_drehen 	= rueckgabe_drehen[1]
-                a=k.axesAverage(100)
-                kompass_az=int(k.calcAngle(a[0],a[1]))
+                a=kompass.axesAverage(100)
+                kompass_az=int(kompass.calcAngle(a[0],a[1]))
             else:
                 analge_ein 	= False
                 state_3 	= False
