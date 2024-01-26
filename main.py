@@ -8,7 +8,7 @@ from faechern	import auffaechern, einfaechern, faechern_kali
 from machine	import Pin, RTC, I2C, Timer
 from time		import sleep, sleep_ms, ticks_ms
 from RTC 		import sync_RTC_Pico_time
-from Sonne 		import getSEA # <0 Sonne nicht aufgegangen #sonnen_pos = getSEA(51,7,2)
+from Sonne 		import getSEA
 from errorcode	import fehlermeldung
 #Zeit mit RTC sync
 sync_RTC_Pico_time()
@@ -16,6 +16,7 @@ sync_RTC_Pico_time()
 #Display
 i2c 	= I2C(0, scl=Pin(1), sda=Pin(0))
 display	= SH1106_I2C(128, 64, i2c, Pin(28), 0x3c)
+
 
 display.sleep(False)
 display.fill(0)
@@ -74,17 +75,15 @@ def ISR_ein_aus(hallo):
         #Nothalt Quittieren
         if NOTHALT.locked() == True:
             i += 1
-            print(i)
             if i == 2:
                 NOTHALT.release()
                 fehler = 0
-                print("Nothalt wurde quittiert! Anlage kalibriert neu!")
                 
                 display.fill(0)
                 display.text('Nothalt wurde ' , 0, 0, 1)
                 display.text('quittiert.'     , 0, 10, 1)
                 display.text('Sunflower'      , 0, 20, 1)
-                display.text('kalibriert neu!', 0, 30, 1)
+                display.text('referenziert neu!', 0, 30, 1)
                 display.show()
                 
                 i = 0
@@ -94,14 +93,12 @@ def ISR_ein_aus(hallo):
         #Fehler Quittieren
         elif fehler != 0:
             q += 1
-            print(q)
             if q == 2:
-                print("Fehler wurde quittiert! Anlage kalibriert neu!")
                 display.fill(0)
                 display.text('Fehler wurde ' , 0, 0, 1)
                 display.text('quittiert.'     , 0, 10, 1)
                 display.text('Sunflower'      , 0, 20, 1)
-                display.text('kalibriert neu!', 0, 30, 1)
+                display.text('referenziert neu!', 0, 30, 1)
                 display.show()
                 
                 fehler = 0
@@ -111,9 +108,6 @@ def ISR_ein_aus(hallo):
 
         else:
             anlage_ein = not anlage_ein
-            print(anlage_ein)
-            #if anlage_ein == False:
-            #    state_10 = True
 
     
 def ISR_NOTHALT(abcde):
@@ -141,8 +135,6 @@ def ISR_NOTHALT(abcde):
         display.text('NOTHALT', 0, 0, 1)
         display.text('Ausgeloest!', 0, 10, 1)
         display.show()
-        print("NOTHALT Ausgelöst!")
-
 
 btn_startstopp.irq(trigger=Pin.IRQ_RISING, handler=ISR_ein_aus)
 btn_NOTHALT.irq(trigger=Pin.IRQ_RISING, handler=ISR_NOTHALT)
@@ -150,11 +142,11 @@ btn_NOTHALT.irq(trigger=Pin.IRQ_RISING, handler=ISR_NOTHALT)
 
 
 while True:
-    sleep(.2)
+    sonnen_pos = getSEA(51,7,2)
     #Wird nur ausgefürt nach Hardreset oder NOTHALT oder Fehler!
     if state_1 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0:
         display.fill(0)
-        display.text('Kalibrierung', 0, 0, 1)
+        display.text('Referenzieren', 0, 0, 1)
         display.text('neigen laeuft', 0, 10, 1)
         display.show()
         
@@ -162,6 +154,7 @@ while True:
         if rueckgabe_neigen[0]!= 0:
             fehler 			= rueckgabe_neigen[0]
             analge_ein 		= False
+            state_1			= False
         else:
             state_1 		= False
             state_2 		= True
@@ -170,7 +163,7 @@ while True:
                 
     if state_2 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0:
         display.fill(0)
-        display.text('Kalibrierung'    , 0, 0, 1)
+        display.text('Referenzieren'    , 0, 0, 1)
         display.text('faechern laeuft', 0, 10, 1)
         display.show()
         if faechern_kali(NOTHALT) != 0:
@@ -183,7 +176,7 @@ while True:
     
     if state_3 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0:
         display.fill(0)
-        display.text('Kalibrierung'    , 0, 0, 1)
+        display.text('Referenzieren'    , 0, 0, 1)
         display.text('drehen laeuft', 0, 10, 1)
         display.show()
         rueckgabe_drehen = drehen_kali(NOTHALT)
@@ -191,7 +184,6 @@ while True:
             fehler 		= rueckgabe_drehen[0]
             analge_ein 	= False
             state_3 	= False
-            #print("drehen mit fehler")
         else:
             if sonnen_pos >0:
                 state_3 	= False
@@ -202,12 +194,13 @@ while True:
                 state_3 	= False
                 state_10 	= True
                 
-#Wenn alle in Grundposition kalibriert sind.
+#Wenn alle in Grundposition referenziert sind.
     if state_4 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
         display.fill(0)
         display.text('Neigen zum ', 0,  0, 1)
         display.text('Auffaechern', 0, 10, 1)
         display.show()
+        anlage_ist_aus = False
         rueckgabe_neigen90 = neigen90(NOTHALT, pos_neigen)
         if  rueckgabe_neigen90[0] != 0:
             fehler = rueckgabe_neigen90[0]
@@ -217,9 +210,10 @@ while True:
             state_4 	= False
             state_5 	= True
             pos_neigen 	= rueckgabe_neigen90[1]
-    elif state_4 == True and sonnen_pos >0:
+    elif state_4 == True and sonnen_pos <0:
         state_4  = False
         state_10 = True
+         
             
     
     if state_5 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
@@ -231,13 +225,10 @@ while True:
             fehler 		= rueckgabe_auffächern
             anlage_ein 	= False
             state_5 	= False
-            print("Fächern mit fehler")
-            print(fehler)
                 
         else:
             state_5 	= False
             state_6 	= True
-            print("Fächern ohne fehler")
 
     if state_6 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
         display.fill(0)
@@ -270,7 +261,6 @@ while True:
             zeit_alt 	= ticks_ms()
 
     if state_8 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
-        print("state 8")
         zeit_neu = ticks_ms()
         wartezeit = (10000 - (zeit_neu - zeit_alt)) / 1000
         
@@ -291,10 +281,8 @@ while True:
             state_9 			= True
 
     if state_9 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
-        print("state 9")
         if ausrichten_freigabe == True:
             ausrichten_freigabe = False
-            print("Automatische Ausrichtung.")
             display.fill(0)
             display.text('Sunflower wird.', 0,  0, 1)
             display.text('automatisch.'   , 0, 10, 1)
@@ -324,7 +312,7 @@ while True:
             state_9 			= False
             state_10 			= True
 
-    else:
+    elif anlage_ist_aus == False:
         state_9 			= False
         state_10 			= True
 
@@ -362,21 +350,24 @@ while True:
                         if rueckgabe_neigen_0[0] !=0:
                             fehler = rueckgabe_neigen_0[0]
                         elif fehler == 0:
-                            print("Parkposition erreicht")
                             display.fill(0)
                             display.text('Parkposition', 0,  0, 1)
                             display.text('erreicht'    , 0, 10, 1)
                             display.show()
                             pos_neigen 		= rueckgabe_neigen_0[1]
                             state_10 		= False
+                            state_8 		= False
                             state_4			= True
                             anlage_ist_aus 	= True
                             
-        elif anlage_ein == True:
+        elif anlage_ist_aus == False:
             state_8  = True
-            state_10 = False
-            print("state 10 else")
-    
+            state_10 = False        
+        
     if fehler != 0:
         fehlermeldung(fehler)
+    sleep(.2)
+
+
+
 
