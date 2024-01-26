@@ -16,7 +16,7 @@ sync_RTC_Pico_time()
 #Display
 i2c 	= I2C(0, scl=Pin(1), sda=Pin(0))
 display	= SH1106_I2C(128, 64, i2c, Pin(28), 0x3c)
-
+kompass=QMC5883L(i2c,OSR=OSR512,ORate=ORate200,FScale=FScale2) #Kompass
 
 display.sleep(False)
 display.fill(0)
@@ -189,6 +189,8 @@ while True:
                 state_3 	= False
                 state_4 	= True
                 pos_drehen 	= rueckgabe_drehen[1]
+                a=k.axesAverage(100)
+                kompass_az=int(k.calcAngle(a[0],a[1]))
             else:
                 analge_ein 	= False
                 state_3 	= False
@@ -234,7 +236,7 @@ while True:
         display.fill(0)
         display.text('Drehen Sonne', 0, 0, 1)
         display.show()
-        rueckgabe_drehen_sonne = drehen_sonne(NOTHALT, pos_drehen)
+        rueckgabe_drehen_sonne = drehen_sonne(NOTHALT,kompass_az )
         if  rueckgabe_drehen_sonne[0] != 0:
             fehler 		= rueckgabe_drehen_sonne[0]
             anlage_ein 	= False
@@ -298,7 +300,7 @@ while True:
                 pos_neigen = rueckgabe_neigen_sonne[1]
             
             if fehler == 0:
-                rueckgabe_drehen_sonne = drehen_sonne(NOTHALT, pos_drehen)
+                rueckgabe_drehen_sonne = drehen_sonne(NOTHALT, kompass_az)
                 
             if rueckgabe_drehen_sonne[0] != 0:
                 fehler 		= rueckgabe_drehen_sonne[0]
