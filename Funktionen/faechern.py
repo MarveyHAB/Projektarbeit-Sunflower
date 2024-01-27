@@ -1,7 +1,7 @@
 from machine import Pin
 from time import sleep,sleep_us
 
-ini_eingefaechert = Pin(19 , Pin.IN,Pin.PULL_UP)
+ini_eingefaechert = Pin(15 , Pin.IN,Pin.PULL_UP)
 ini_ausgefaechert = Pin(20 , Pin.IN,Pin.PULL_UP)
 auf               = Pin(26 , Pin.IN,Pin.PULL_UP)
 zu                = Pin(27 , Pin.IN,Pin.PULL_UP)
@@ -47,7 +47,6 @@ def faechern_kali(NOTHALT):
             print ("Ini ausgefächert angesprochen")
             break
             #bzw nur noch ein paar schritte
-    sleep(.5)
     SLEEP_PIN.value(0)
     PSU24V.value(0)
     
@@ -85,7 +84,6 @@ def auffaechern(NOTHALT):
             print ("Ini ausgefächert angesprochen")
             break
             #bzw nur noch ein paar schritte
-    sleep(.5)
     SLEEP_PIN.value(0)
     PSU24V.value(0)
     
@@ -105,7 +103,7 @@ def einfaechern(NOTHALT):
     print("wird eingefaechert")
     
     DIR_PIN.value(1)
-    steps = round((318/1.8)*micro_step*ratio) # Eigentlich 315° Fächern +3 für Toleranz
+    steps = round((320/1.8)*micro_step*ratio) # Eigentlich 315° Fächern +5 für Toleranz
     
     SLEEP_PIN.value(1)
     PSU24V.value(1)
@@ -121,7 +119,6 @@ def einfaechern(NOTHALT):
         if ini_eingefaechert.value() == 0:
             break
             #bzw nur noch ein paar schritte
-    sleep(.5)
     SLEEP_PIN.value(0)
     PSU24V.value(0)
     
@@ -205,5 +202,4 @@ def faechern_hand():
 #auffaechern(NOTHALT)
 #faechern_kali(NOTHALT)
 #faechern_hand()
-
 

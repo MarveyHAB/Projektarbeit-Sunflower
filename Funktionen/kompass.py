@@ -108,8 +108,8 @@ class QMC5883L:
         return x,y,z
 
     def normalize(self,x,y):
-        x-=k.xmid
-        y-=k.ymid
+        x-=self.xmid
+        y-=self.ymid
         x=int(x/self.dx*1000+0.5)
         y=int(y/self.dy*1000+0.5)
         return x,y
@@ -117,8 +117,8 @@ class QMC5883L:
     def axesAverage(self,n):
         xm,ym=0,0
         for i in range(n):
-            x,y,z=k.readAxes()
-            x,y=k.normalize(x,y)
+            x,y,z=self.readAxes()
+            x,y=self.normalize(x,y)
             xm+=x
             ym+=y
         xm=int(xm/n)
@@ -142,6 +142,13 @@ class QMC5883L:
                 angle = degrees(atan2(y,x))
                 if angle < 0:
                     angle+=360
+        #Jans Winkeländerung
+        winkel_offset = 90
+        if angle+winkel_offset<360:
+            angle = angle+winkel_offset
+        else:
+            angle = (angle+winkel_offset)%360
+        
         return angle
     
     def readTemperature(self):
@@ -195,37 +202,28 @@ class QMC5883L:
 
 
 # **********************************************************
-def alleAus(show=True):
-    for i in range(neoCnt):
-        np[i]=(0,0,0)
-    if show:
-        np.write()
-
-brake = 		Pin(11,Pin.OUT,value =1)
- 
-delta=22.5 #keine ahnung
-h=ADC(0)   #keine ahnung
+"""
 i2c=I2C(0, scl=Pin(1), sda=Pin(0))
-i2c.writeto(0x70, b'\x02')
+
 sleep(.5)
 k=QMC5883L(i2c,OSR=OSR512,ORate=ORate200,FScale=FScale2) #Kompass
-i2c.writeto(0x70, b'\x03')
-sleep(0.1)
-display = sh1106.SH1106_I2C(128, 64, i2c, Pin(16), 0x3c) #Display
 
+sleep(0.1)
+display = sh1106.SH1106_I2C(128, 64, i2c, Pin(28), 0x3c) #Display
+#zum kalibirieren ist die taste
 taste=Pin(2,Pin.IN,Pin.PULL_UP)
 
 if taste.value()==0:
     k.calibrate()
 else:
     while 1:
-        i2c.writeto(0x70, b'\x02')
+    
         a=k.axesAverage(100)
         w=int(k.calcAngle(a[0],a[1]))
         print(w)
         strWinkel = str(w)
-        i2c.writeto(0x70, b'\x03')
         display.fill(0)
         display.text(strWinkel, 0, 0, 1)
         display.show()
         #print(str(int(w+0.5)))
+"""

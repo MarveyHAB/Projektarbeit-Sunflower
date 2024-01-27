@@ -39,8 +39,8 @@ time_step_hoch 	  = 2500	#in us
 
 grundpos=6 #in °
 
-max_steps_hoch  = round((77/1.8)*micro_step_hoch*ratio)
-max_steps_runter= round((77/1.8)*micro_step_runter*ratio)
+max_steps_hoch  = round((85/1.8)*micro_step_hoch*ratio)
+max_steps_runter= round((85/1.8)*micro_step_runter*ratio)
 
 def neigen_kali(NOTHALT):
     print("Kalibrierung Neigen Achse")
@@ -52,7 +52,7 @@ def neigen_kali(NOTHALT):
             return 0, 90
     else:
         PSU24V.value(1)
-        sleep(2)      
+        sleep(1)      
         stepper.enable()
         stepper.setCurrent(3, 100)
         stepper.setStepMode(stepper.MicroStep4)
@@ -183,19 +183,19 @@ def neigen_sonne(NOTHALT, pos):
     if sonnen_pos < 0:
         print("die Sonne ist noch nicht aufgegangen")
         return 0,pos
-        
-    PSU24V.value(1)
-    sleep(.2)
-    stepper.enable()
-    stepper.setCurrent(3, 100)
     
     if sonnen_pos<grundpos:
         print("Sonenpos. kleiner Grundpos deshalb fahre auf Grundpos.")
         sonnen_pos = grundpos
     
-    if pos+1<sonnen_pos or pos-1<sonnen_pos:
+    if sonnen_pos<=pos+1 and sonnen_pos>=pos-1:
         print("Steht noch +-1 in Sonnenposition")
         return 0,pos
+    
+    PSU24V.value(1)
+    sleep(.2)
+    stepper.enable()
+    stepper.setCurrent(3, 100)
     
     if pos<sonnen_pos: #hoch fahren
         dif = sonnen_pos-pos
@@ -212,12 +212,7 @@ def neigen_sonne(NOTHALT, pos):
         DIR_PIN.value(1)
         stepper.setStepMode(stepper.MicroStep8)
         print("fahre runter")
-        time_step = time_step_runter
-        
-    if NOTHALT.locked()== True:
-        print("Not-Halt hat ausgelöst")
-        return 41,999
-    
+        time_step = time_step_runter  
     
     for _ in range(steps):
         if NOTHALT.locked()== True:
@@ -327,4 +322,3 @@ def neigen_hand():
 #neigen0(NOTHALT,90)
 #neigen_sonne(NOTHALT,90)
 #neigen_kali(NOTHALT)            
-
