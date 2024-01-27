@@ -66,7 +66,7 @@ def drehen_kali(NOTHALT):
     SLEEP_PIN.value(1)
     brake.value(1)
     sleep(.2)
-    ini_angesprochen = False
+
     
     for _ in range(steps):
         if NOTHALT.locked()== True:
@@ -146,7 +146,7 @@ def drehen_grundpos(NOTHALT):
     SLEEP_PIN.value(1)
     brake.value(1)
     sleep(.2)
-    ini_angesprochen = False
+
     
     gefahrene_steps = 0 #um zu zählen wie weit er gefahren ist vor Not aus
     
@@ -181,7 +181,7 @@ def drehen_grundpos(NOTHALT):
     with open("totale_pos.txt","w") as datei:
             datei.write(str(akt_pos))
     
-    if ini_angesprochen == False:
+    if ini_grund_pos.value() == 1:
         print("Ini Grundpos. wurde nicht erreicht")
         return 31
     
