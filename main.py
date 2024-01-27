@@ -263,7 +263,7 @@ while True:
 
     if state_8 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
         zeit_neu = ticks_ms()
-        wartezeit = (10000 - (zeit_neu - zeit_alt)) / 1000
+        wartezeit = (120000 - (zeit_neu - zeit_alt)) / 1000
         
         display.fill(0)
         display.text('Zeit bis', 0,  0, 1)
@@ -375,3 +375,8 @@ while True:
         fehlermeldung(fehler)
 
     sleep(.2)
+    
+    
+
+
+
