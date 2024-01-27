@@ -19,7 +19,7 @@ display	= SH1106_I2C(128, 64, i2c, Pin(28), 0x3c)
 display.sleep(False)
 display.fill(0)
 display.text('Sunflower '  , 30, 20, 1)
-display.text('ist bereit!', 15, 30, 1)
+display.text('ist bereit!', 20, 30, 1)
 display.show()
 
 #Kompass
@@ -271,7 +271,7 @@ while True:
         display.text('ausrichtung: %is.' %wartezeit  , 0, 20, 1)
         display.show()
         
-        if zeit_neu - zeit_alt >= 10000:
+        if zeit_neu - zeit_alt >= 120000:
             zeit_alt			= zeit_neu
             state_8 			= False
             state_9 			= True
@@ -342,8 +342,8 @@ while True:
             elif fehler == 0:
                 pos_neigen 			= rueckgabe_neigen_90[1]
                 rueckgabe_drehen 	= drehen_grundpos(NOTHALT)
-                if rueckgabe_drehen[0] != 0:
-                    fehler = rueckgabe_drehen[0]
+                if rueckgabe_drehen != 0:
+                    fehler = rueckgabe_drehen
                 elif fehler == 0:
                     rueckgabe_faechern 	= einfaechern(NOTHALT)
                     if rueckgabe_faechern != 0:
@@ -375,8 +375,3 @@ while True:
         fehlermeldung(fehler)
 
     sleep(.2)
-    
-    
-
-
-
