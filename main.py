@@ -347,6 +347,7 @@ while True:
             state_7 	= False
             state_8 	= False
             state_9 	= False
+            state_10 	= False
                             
             rueckgabe_neigen_90 = neigen90(NOTHALT, pos_neigen)
             if rueckgabe_neigen_90[0] != 0:
@@ -391,6 +392,12 @@ while True:
             state_14 		= False
             state_4			= True
             anlage_ist_aus 	= True
+            
+            sleep(2)
+            display.fill(0)
+            display.text('Sunflower '  , 30, 20, 1)
+            display.text('ist bereit!', 20, 30, 1)
+            display.show()
         
     if fehler != 0:
         fehlermeldung(fehler)
