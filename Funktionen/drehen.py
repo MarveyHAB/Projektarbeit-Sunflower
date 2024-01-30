@@ -3,10 +3,10 @@ from time       import sleep_us,sleep,sleep_ms
 from Sonne      import getAZ
 
 ini_grund_pos	= Pin(21 , Pin.IN,Pin.PULL_UP)
-brake			= Pin(11 , Pin.OUT,value = 0)
 rechts			= Pin(27 , Pin.IN,Pin.PULL_UP)
 links			= Pin(26 , Pin.IN,Pin.PULL_UP)
 
+brake			= Pin(11 , Pin.OUT,value = 0)
 # Pins für den DRV8825 Schrittmotor-Treiber
 DIR_PIN   = Pin(2, Pin.OUT,value =0)  # Richtungs-Pin 1 Uhrzeigersinn
 STEP_PIN  = Pin(3, Pin.OUT,value =0)  
