@@ -67,7 +67,7 @@ pos_drehen 			= 0
 
 
 def ISR_ein_aus(pin27):
-    global anlage_ein, fehler, NOTHALT, push_ein_aus, push_ein_aus_old, quittieren, state_1 
+    global anlage_ein, fehler, NOTHALT, push_ein_aus, push_ein_aus_old, quittieren, state_1, state_2, state_3, state_4, state_5, state_6, state_7, state_8, state_9, state_10, state_11, state_12, state_13, state_14
     push_ein_aus_old = push_ein_aus
     push_ein_aus = ticks_ms()
     
@@ -89,8 +89,22 @@ def ISR_ein_aus(pin27):
                 display.text('referenziert neu!', 0, 30, 1)
                 display.show()
                 
-                state_1 	= True
-                anlage_ein 	= True
+                state_1 = True 
+                state_2 = False 
+                state_3 = False
+                state_4 = False
+                state_5 = False
+                state_6 = False
+                state_7 = False
+                state_8 = False
+                state_9 = False
+                state_10= False
+                state_11= False
+                state_12= False
+                state_13= False
+                state_14= False
+                
+                anlage_ein = True
                 sleep(2)
                 return
 
@@ -394,6 +408,7 @@ while True:
             anlage_ist_aus 	= True
             
             sleep(2)
+            
             display.fill(0)
             display.text('Sunflower '  , 30, 20, 1)
             display.text('ist bereit!', 20, 30, 1)
