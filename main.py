@@ -205,7 +205,7 @@ while True:
     elif state_4 == True and sonnen_pos <0:
         state_4  = False
         state_11 = True
-    elif anlage_ist_aus == False and NOTHALT.locked() == False:
+    elif state_4 == True anlage_ein == False and anlage_ist_aus == False and NOTHALT.locked() == False:
         state_4  = False
         State_11 = True
          
@@ -225,7 +225,7 @@ while True:
         else:
             state_5 	= False
             state_6 	= True
-    elif anlage_ein == False and NOTHALT.locked() == False:
+    elif state_5 == True anlage_ein == False and anlage_ist_aus == False and NOTHALT.locked() == False:
         state_5  = False
         State_11 = True
 
@@ -244,7 +244,7 @@ while True:
             state_6 	= False
             state_7 	= True
             pos_drehen 	= rueckgabe_drehen_sonne[1]
-    elif anlage_ein == False and NOTHALT.locked() == False:
+    elif state_6 == True anlage_ein == False and anlage_ist_aus == False and NOTHALT.locked() == False:
         state_6  = False
         State_11 = True
 
@@ -265,7 +265,7 @@ while True:
             state_8 	= True
             pos_neigen 	= rueckgabe_neigen_sonne[1]
             zeit_alt 	= ticks_ms()
-    elif anlage_ein == False and NOTHALT.locked() == False:
+    elif state_7 == True anlage_ein == False and anlage_ist_aus == False and NOTHALT.locked() == False:
         state_7  = False
         State_11 = True
 
@@ -284,7 +284,7 @@ while True:
             state_9 			= True
             ausrichten_freigabe = True
 
-    elif anlage_ein == False and NOTHALT.locked() == False:
+    elif state_8 == True anlage_ein == False and anlage_ist_aus == False and NOTHALT.locked() == False:
         state_8  = False
         State_11 = True
 
@@ -306,7 +306,7 @@ while True:
             state_9 	= False
             state_10 	= True
 
-    elif anlage_ist_aus == False and NOTHALT.locked() == False:
+    elif state_9 == True anlage_ein == False and anlage_ist_aus == False and NOTHALT.locked() == False:
         state_9 		= False
         state_11 		= True
         
@@ -322,8 +322,8 @@ while True:
             state_10 	= False
             state_8 	= True
 
-    elif anlage_ist_aus == False and NOTHALT.locked() == False:
-        state_9 		= False
+    elif state_10 == True anlage_ein == False and anlage_ist_aus == False and NOTHALT.locked() == False:
+        state_10 		= False
         state_11 		= True
         
     #Ausschalten    
