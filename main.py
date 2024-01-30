@@ -216,9 +216,6 @@ while True:
             state_4 	= False
             state_5 	= True
             pos_neigen 	= rueckgabe_neigen90[1]
-    elif state_4 == True and sonnen_pos <0:
-        state_4  = False
-        state_11 = True
     elif state_4 == True anlage_ein == False and anlage_ist_aus == False and NOTHALT.locked() == False:
         state_4  = False
         State_11 = True
@@ -416,5 +413,15 @@ while True:
         
     if fehler != 0:
         fehlermeldung(fehler)
+        
+    if sonnen_pos <0 and anlage_ist aus == False and NOTHALT.locked() == False:
+        state_5 	= False
+        state_6 	= False
+        state_7 	= False
+        state_8 	= False
+        state_9 	= False
+        state_10 	= False
+        state_11	= True
+
 
     sleep(.2)
