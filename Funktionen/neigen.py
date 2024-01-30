@@ -24,17 +24,15 @@ ini_90geneigt  = Pin(17 , Pin.IN,Pin.PULL_UP)
 hoch     = Pin(27 , Pin.IN,Pin.PULL_UP)
 runter   = Pin(26 , Pin.IN,Pin.PULL_UP)
 
-# Pins für den DRV8825 Schrittmotor-Treiber
 DIR_PIN      = Pin(5, Pin.OUT,value =0)  # Richtungs-Pin 1 fährt runter!!!
 STEP_PIN     = Pin(6, Pin.OUT,value =0)  # Schritt-Pin
 SLEEP_PIN    = Pin(7, Pin.OUT,value =0)  # Aktivierung des Treibers
 PSU24V       = Pin(12 , Pin.OUT, value=0)
-#viertel_step = Pin(14 , Pin.OUT,value =0) # 0 = Full Step 1= 1/4 Step
 
-micro_step_runter = 8		#1/4
-micro_step_hoch   = 4		#Full Step!
+micro_step_runter = 8		#1/8
+micro_step_hoch   = 4		#1/4
 ratio             = 30		
-time_step_runter  = 1250 	#in us
+time_step_runter  = 1250 	       #in us
 time_step_hoch 	  = 2500	#in us
 
 grundpos=6 #in °
@@ -43,9 +41,7 @@ max_steps_hoch  = round((85/1.8)*micro_step_hoch*ratio)
 max_steps_runter= round((85/1.8)*micro_step_runter*ratio)
 
 def neigen_kali(NOTHALT):
-    print("Kalibrierung Neigen Achse")
-    
-
+    print("Referenzierung Neigen Achse")
     
     if ini_90geneigt.value()==0:
             #bereits in 90° Pos.
