@@ -174,7 +174,6 @@ def neigen_sonne(NOTHALT, pos):
     print("Pos vor Fahrt: %i",pos)
     
     sonnen_pos = getSEA(51,7,2)
-    #sonnen_pos = round(sonnen_pos)  Kontrollieren
     print("Sonnenhöhe: %i"%sonnen_pos)
     if sonnen_pos < 0:
         print("die Sonne ist noch nicht aufgegangen")
@@ -236,7 +235,7 @@ def neigen_sonne(NOTHALT, pos):
     if ini_0geneigt.value() == 0 and sonnenpos<=grundpos+2: #+2 um Tolernaz auszugleichen
         return 0,grundpos
     
-    if ini_0geneigt.value() == 0:
+    if ini_0geneigt.value() == 0: #Fehlerhaft in Endlage gefahren
         return 10,grundpos
     
     return 0,sonnen_pos #wenn alles gut ist
