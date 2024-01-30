@@ -5,5 +5,4 @@ Projektarbeit beschreibung:
 
 ![Solarblume_V2_Elektronikentwurf v5 test](https://github.com/MarveyHAB/Projektarbeit/assets/43411557/f90e5230-7a66-4b1b-afc1-b5f23246c72c)
 
-[Solarblume_V2_Elektronikentwurf v2.pdf](https://github.com/MarveyHAB/Projektarbeit-Sunflower/files/14095468/Solarblume_V2_Elektronikentwurf.v2.pdf)
-
+<img width="842" alt="Solarblume_V2_Elektronikentwurf v2" src="https://github.com/MarveyHAB/Projektarbeit-Sunflower/assets/43411557/a4270595-5a97-4591-a1bd-c6b715af92e2">
