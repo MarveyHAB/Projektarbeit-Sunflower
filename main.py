@@ -47,6 +47,10 @@ state_7 			= False
 state_8 			= False
 state_9 			= False
 state_10			= False
+state_11			= False
+state_12			= False
+state_13			= False
+state_14			= False
 
 #BTN entprellen
 push_ein_aus 		= 0
@@ -98,7 +102,7 @@ def ISR_ein_aus(pin27):
 
     
 def ISR_NOTHALT(pin26):
-    global NOTHALT, fehler, anlage_ein, push_nothalt, push_nothalt_old, state_1, state_2, state_3, state_4, state_5, state_6, state_7, state_8, state_9, state_10
+    global NOTHALT, fehler, anlage_ein, push_nothalt, push_nothalt_old, state_1, state_2, state_3, state_4, state_5, state_6, state_7, state_8, state_9, state_10, state_11, state_12, state_13, state_14
     push_nothalt_old = push_nothalt
     push_nothalt = ticks_ms()
     
@@ -115,6 +119,10 @@ def ISR_NOTHALT(pin26):
         state_8 	= False
         state_9 	= False
         state_10	= False
+        state_11	= False
+        state_12	= False
+        state_13	= False
+        state_14	= False
         NOTHALT.acquire()
         return
     else:
@@ -176,7 +184,7 @@ while True:
             else:
                 analge_ein 	= False
                 state_3 	= False
-                state_10 	= True
+                state_11 	= True
                 
 #Wenn alle in Grundposition referenziert sind.
     if state_4 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
@@ -196,10 +204,10 @@ while True:
             pos_neigen 	= rueckgabe_neigen90[1]
     elif state_4 == True and sonnen_pos <0:
         state_4  = False
-        state_10 = True
+        state_11 = True
     elif anlage_ist_aus == False and NOTHALT.locked() == False:
         state_4  = False
-        State_10 = True
+        State_11 = True
          
             
     
@@ -219,7 +227,7 @@ while True:
             state_6 	= True
     elif anlage_ein == False and NOTHALT.locked() == False:
         state_5  = False
-        State_10 = True
+        State_11 = True
 
     if state_6 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
         display.fill(0)
@@ -238,7 +246,7 @@ while True:
             pos_drehen 	= rueckgabe_drehen_sonne[1]
     elif anlage_ein == False and NOTHALT.locked() == False:
         state_6  = False
-        State_10 = True
+        State_11 = True
 
     if state_7 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
         display.fill(0)
@@ -259,7 +267,7 @@ while True:
             zeit_alt 	= ticks_ms()
     elif anlage_ein == False and NOTHALT.locked() == False:
         state_7  = False
-        State_10 = True
+        State_11 = True
 
     if state_8 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
         zeit_neu = ticks_ms()
@@ -272,56 +280,54 @@ while True:
         display.show()
         
         if zeit_neu - zeit_alt >= 120000:
-            zeit_alt			= zeit_neu
             state_8 			= False
             state_9 			= True
             ausrichten_freigabe = True
 
-        else:
-            state_8 			= False
-            state_9 			= True
     elif anlage_ein == False and NOTHALT.locked() == False:
         state_8  = False
-        State_10 = True
+        State_11 = True
 
     if state_9 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
-        if ausrichten_freigabe == True:
-            ausrichten_freigabe = False
-            display.fill(0)
-            display.text('Sunflower wird.', 0,  0, 1)
-            display.text('automatisch.'   , 0, 10, 1)
-            display.text('ausgerichtet.'  , 0, 20, 1)
-            display.show()
-            
-            rueckgabe_neigen_sonne = neigen_sonne(NOTHALT, pos_neigen)
-            if rueckgabe_neigen_sonne[0] != 0:
-                fehler 		= rueckgabe_neigen_sonne[0]
-                analage_ein	= False
-                state_9 	= False
-            else:
-                pos_neigen = rueckgabe_neigen_sonne[1]
-            
-            if fehler == 0:
-                rueckgabe_drehen_sonne = drehen_sonne(NOTHALT, kompass_az,pos_drehen)
-                
-            if rueckgabe_drehen_sonne[0] != 0:
-                fehler 		= rueckgabe_drehen_sonne[0]
-                analge_ein 	= False
-                state_9 	= False
-            else:
-                pos_drehen = rueckgabe_drehen_sonne[1]
-                state_9 			= False
-                state_10 			= True
+        display.fill(0)
+        display.text('Sunflower wird.', 0,  0, 1)
+        display.text('automatisch.'   , 0, 10, 1)
+        display.text('ausgerichtet.'  , 0, 20, 1)
+        display.show()
+        sleep(2)
+        
+        rueckgabe_neigen_sonne = neigen_sonne(NOTHALT, pos_neigen)
+        if rueckgabe_neigen_sonne[0] != 0:
+            fehler 		= rueckgabe_neigen_sonne[0]
+            analage_ein	= False
+            state_9 	= False
         else:
-            state_9 			= False
-            state_10 			= True
+            pos_neigen = rueckgabe_neigen_sonne[1]
+            state_9 	= False
+            state_10 	= True
 
     elif anlage_ist_aus == False and NOTHALT.locked() == False:
-        state_9 			= False
-        state_10 			= True
+        state_9 		= False
+        state_11 		= True
+        
+    if state_10 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
+        rueckgabe_drehen_sonne = drehen_sonne(NOTHALT, kompass_az,pos_drehen)        
+        if rueckgabe_drehen_sonne[0] != 0:
+            fehler 		= rueckgabe_drehen_sonne[0]
+            analge_ein 	= False
+            state_10 	= False
+        else:
+            pos_drehen = rueckgabe_drehen_sonne[1]
+            zeit_alt 	= ticks_ms()
+            state_10 	= False
+            state_8 	= True
 
+    elif anlage_ist_aus == False and NOTHALT.locked() == False:
+        state_9 		= False
+        state_11 		= True
+        
     #Ausschalten    
-    if state_10 == True and NOTHALT.locked() == False and fehler == 0:
+    if state_11 == True and NOTHALT.locked() == False and fehler == 0:
         if (anlage_ein == False or sonnen_pos <0) and anlage_ist_aus == False:
             if anlage_ein == False:
                 display.fill(0)
@@ -335,41 +341,56 @@ while True:
                 display.text('bedingt .'     , 0, 20, 1)
                 display.text('ausgeschaltet.' , 0, 30, 1)
                 display.show()
+            
+            state_5 	= False
+            state_6 	= False
+            state_7 	= False
+            state_8 	= False
+            state_9 	= False
                             
             rueckgabe_neigen_90 = neigen90(NOTHALT, pos_neigen)
             if rueckgabe_neigen_90[0] != 0:
                 fehler = rueckgabe_neigen_90[0]
-            elif fehler == 0:
-                pos_neigen 			= rueckgabe_neigen_90[1]
-                rueckgabe_drehen 	= drehen_grundpos(NOTHALT)
-                if rueckgabe_drehen != 0:
-                    fehler = rueckgabe_drehen
-                elif fehler == 0:
-                    rueckgabe_faechern 	= einfaechern(NOTHALT)
-                    if rueckgabe_faechern != 0:
-                        fehler = rueckgabe_faechern
-                    elif fehler == 0:
-                        rueckgabe_neigen_0 = neigen0(NOTHALT, pos_neigen)
-                        if rueckgabe_neigen_0[0] !=0:
-                            fehler = rueckgabe_neigen_0[0]
-                        elif fehler == 0:
-                            display.fill(0)
-                            display.text('Parkposition', 0,  0, 1)
-                            display.text('erreicht'    , 0, 10, 1)
-                            display.show()
-                            pos_neigen 		= rueckgabe_neigen_0[1]
-                            state_10 		= False
-                            state_9 		= False
-                            state_8 		= False
-                            state_7 		= False
-                            state_6 		= False
-                            state_5 		= False
-                            state_4			= True
-                            anlage_ist_aus 	= True
+            else:
+                pos_neigen = rueckgabe_neigen_90[1]
+                state_11 = False
+                state_12 = True
                             
         elif anlage_ein == True:
             state_8  = True
-            state_10 = False        
+            state_11 = False
+            
+    if state_12 == True and NOTHALT.locked() == False and fehler == 0:
+        rueckgabe_drehen = drehen_grundpos(NOTHALT)
+        if rueckgabe_drehen != 0:
+            fehler = rueckgabe_drehen
+        else:
+            state_12 = False
+            state_13 = True
+        
+    if state_13 == True and NOTHALT.locked() == False and fehler == 0:
+        rueckgabe_faechern = einfaechern(NOTHALT)
+        if rueckgabe_faechern != 0:
+            fehler = rueckgabe_faechern
+        else:
+            state_13 = False
+            state_14 = True
+        
+    if state_14 == True and NOTHALT.locked() == False and fehler == 0:
+        rueckgabe_neigen_0 = neigen0(NOTHALT, pos_neigen)
+        if rueckgabe_neigen_0[0] !=0:
+            fehler = rueckgabe_neigen_0[0]
+        else:
+            pos_neigen 		= rueckgabe_neigen_0[1]
+            
+            display.fill(0)
+            display.text('Parkposition', 0,  0, 1)
+            display.text('erreicht'    , 0, 10, 1)
+            display.show()
+            
+            state_14 		= False
+            state_4			= True
+            anlage_ist_aus 	= True
         
     if fehler != 0:
         fehlermeldung(fehler)
