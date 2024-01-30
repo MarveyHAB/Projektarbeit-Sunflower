@@ -44,9 +44,8 @@ def faechern_kali(NOTHALT):
         STEP_PIN.value(0)
         sleep_us(int(time_step/2))
         if ini_ausgefaechert.value() == 0:
-            print ("Ini ausgefächert angesprochen")
+            print ("Endlage ausgefächert angesprochen")
             break
-            #bzw nur noch ein paar schritte
     SLEEP_PIN.value(0)
     PSU24V.value(0)
     
@@ -55,10 +54,10 @@ def faechern_kali(NOTHALT):
         return 41
     
     if ini_ausgefaechert.value() == 1:
-        print("Ini ist nicht angesprochen, Kalibirierung fehlgeschlagen!")
+        print("Endlage ist nicht angesprochen, Referenzierung fehlgeschlagen!")
         return 20
     
-    print("Kalibrierung fächern erfolgreich")
+    print("Referenzierung fächern erfolgreich")
     return 0  
 
 
