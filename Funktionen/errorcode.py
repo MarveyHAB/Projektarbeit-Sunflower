@@ -5,10 +5,10 @@ display	= SH1106_I2C(128, 64, i2c, Pin(28), 0x3c)
 
 def fehlermeldung(fehler):
         if fehler == 10:
-            print("Fehler Kalibrierung neigen")
+            print("Fehler re­fe­ren­zie­ren neigen")
             display.fill(0)
             display.text('Fehler'      , 0,  0, 1)
-            display.text('Kalibrierung', 0, 10, 1)
+            display.text('re­fe­ren­zie­ren', 0, 10, 1)
             display.text('neigen'      , 0, 20, 1)
             display.show()
             return
@@ -25,10 +25,10 @@ def fehlermeldung(fehler):
             display.show()
             return
         elif fehler == 20:
-            print("Fehler Kalibrierung fächern")
+            print("Fehler re­fe­ren­zie­ren fächern")
             display.fill(0)
             display.text('Fehler'      , 0,  0, 1)
-            display.text('Kalibrierung', 0, 10, 1)
+            display.text('re­fe­ren­zie­ren', 0, 10, 1)
             display.text('faechern'    , 0, 20, 1)
             display.show()
             return
@@ -47,10 +47,10 @@ def fehlermeldung(fehler):
             display.show()
             return
         elif fehler == 30:
-            print("Fehler Kalibrierung Drehen")
+            print("Fehler re­fe­ren­zie­ren Drehen")
             display.fill(0)
             display.text('Fehler'      , 0,  0, 1)
-            display.text('Kalibrierung', 0, 10, 1)
+            display.text('re­fe­ren­zie­ren', 0, 10, 1)
             display.text('drehen'      , 0, 20, 1)
             display.show()
             return
