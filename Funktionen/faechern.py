@@ -11,15 +11,9 @@ STEP_PIN  = Pin(9 , Pin.OUT,value =0)  # Schritt-Pin
 SLEEP_PIN = Pin(10, Pin.OUT,value =0)  # Aktivierung des Treibers
 PSU24V = Pin(12 , Pin.OUT, value=0)
 
-#muss 315° fächern
-#from _thread	import allocate_lock
-#NOTHALT = allocate_lock()
-
-
-micro_step = 4 #1/4
-ratio      = 30
-time_step  = 1500
-
+micro_step = 4     #1/4
+ratio      = 30    #1:30 Getriebe
+time_step  = 1500  # in us
 
 def faechern_kali(NOTHALT):
     
@@ -196,6 +190,10 @@ def faechern_hand():
             PSU24V.value(0)
             SLEEP_PIN.value(0)
             sleep(.2)
+
+#muss 315° fächern
+#from _thread	import allocate_lock
+#NOTHALT = allocate_lock()
 
 #einfaechern(NOTHALT)
 #auffaechern(NOTHALT)
