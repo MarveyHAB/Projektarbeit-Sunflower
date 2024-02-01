@@ -7,3 +7,6 @@ Projektarbeit beschreibung:
 
 Der Schaltplan:
 <img width="842" alt="Solarblume_V2_Elektronikentwurf v2" src="https://github.com/MarveyHAB/Projektarbeit-Sunflower/assets/43411557/a4270595-5a97-4591-a1bd-c6b715af92e2">
+
+Pico W Pinout:
+![PicoW-A4-Pinout](https://github.com/MarveyHAB/Projektarbeit-Sunflower/assets/145771197/fb656050-3097-49e2-90a8-68dd33511469)
