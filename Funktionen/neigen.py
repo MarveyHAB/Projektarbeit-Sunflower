@@ -232,7 +232,7 @@ def neigen_sonne(NOTHALT, pos):
     if ini_90geneigt.value() == 0:
         return 10,90
     
-    if ini_0geneigt.value() == 0 and sonnenpos<=grundpos+2: #+2 um Tolernaz auszugleichen
+    if ini_0geneigt.value() == 0 and sonnen_pos<=grundpos+2: #+2 um Tolernaz auszugleichen
         return 0,grundpos
     
     if ini_0geneigt.value() == 0: #Fehlerhaft in Endlage gefahren
