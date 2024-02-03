@@ -1,8 +1,8 @@
-from sh1106 	import SH1106_I2C
-from _thread	import allocate_lock
-from drehen		import drehen_grundpos, drehen_sonne, drehen_kali
-from neigen		import neigen0, neigen90, neigen_sonne, neigen_kali
-from faechern	import auffaechern, einfaechern, faechern_kali
+from sh1106     import SH1106_I2C
+from _thread    import allocate_lock
+from drehen     import drehen_grundpos, drehen_sonne, drehen_kali
+from neigen     import neigen0, neigen90, neigen_sonne, neigen_kali
+from faechern   import auffaechern, einfaechern, faechern_kali
 from machine	import Pin, I2C
 from time		import sleep, ticks_ms
 from RTC 		import sync_RTC_Pico_time
@@ -74,8 +74,11 @@ def ISR_ein_aus(pin27):
     push_ein_aus = ticks_ms()
     
     if (push_ein_aus - push_ein_aus_old) > 500:
+        
+        if fehler == 0 and NOTHALT.locked() == False:
+            anlage_ein = not anlage_ein
         #Fehler Quittieren
-        if fehler != 0 or NOTHALT.locked() != False:
+        elif fehler != 0 or NOTHALT.locked() != False:
             quittieren += 1
             if quittieren == 2:
                 NOTHALT.release()
@@ -107,8 +110,7 @@ def ISR_ein_aus(pin27):
                 state_14= False
                 
                 sleep(2)
-        elif fehler == 0 and NOTHALT.locked() == False:
-            anlage_ein = not anlage_ein
+        
             
 def ISR_NOTHALT(pin26):
     global NOTHALT, fehler, anlage_ein, push_nothalt, push_nothalt_old, state_1, state_2, state_3, state_4, state_5, state_6, state_7, state_8, state_9, state_10, state_11, state_12, state_13, state_14
