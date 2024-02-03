@@ -4,11 +4,11 @@ from drehen     import drehen_grundpos, drehen_sonne, drehen_kali
 from neigen     import neigen0, neigen90, neigen_sonne, neigen_kali
 from faechern   import auffaechern, einfaechern, faechern_kali
 from machine	import Pin, I2C
-from time		import sleep, ticks_ms
-from RTC 		import sync_RTC_Pico_time
-from Sonne 		import getSEA
-from errorcode	import fehlermeldung
-from kompass 	import QMC5883L
+from time       import sleep, ticks_ms
+from RTC        import sync_RTC_Pico_time
+from Sonne      import getSEA
+from errorcode  import fehlermeldung
+from kompass    import QMC5883L
 #Zeit mit RTC sync
 sync_RTC_Pico_time()
 
