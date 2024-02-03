@@ -75,7 +75,6 @@ def ISR_ein_aus(pin27):
     
     if (push_ein_aus - push_ein_aus_old) > 500:
         #Fehler Quittieren
-        
         if fehler != 0 or NOTHALT.locked() != False:
             quittieren += 1
             if quittieren == 2:
@@ -91,6 +90,7 @@ def ISR_ein_aus(pin27):
                 display.text('referenziert neu!', 0, 30, 1)
                 display.show()
                 
+                anlage_ein = True
                 state_1 = True 
                 state_2 = False 
                 state_3 = False
@@ -106,18 +106,10 @@ def ISR_ein_aus(pin27):
                 state_13= False
                 state_14= False
                 
-                anlage_ein = True
                 sleep(2)
-                return
-
-        else:
+        elif fehler == 0 and NOTHALT.locked() == False:
             anlage_ein = not anlage_ein
-            print("Anlage Ein %s"%anlage_ein)
-            return
-    else:
-        return
-
-    
+            
 def ISR_NOTHALT(pin26):
     global NOTHALT, fehler, anlage_ein, push_nothalt, push_nothalt_old, state_1, state_2, state_3, state_4, state_5, state_6, state_7, state_8, state_9, state_10, state_11, state_12, state_13, state_14
     push_nothalt_old = push_nothalt
@@ -152,23 +144,6 @@ btn_NOTHALT.irq(trigger=Pin.IRQ_RISING, handler=ISR_NOTHALT)
 
 while True:
     sonnen_pos = getSEA(51,7,2)
-    
-    print("Sonnen Pos %i"%sonnen_pos)
-    print("state_1 : %s" %state_1)
-    print("state_2 : %s" %state_2)
-    print("state_3 : %s" %state_3)
-    print("state_4 : %s" %state_4)
-    print("state_5 : %s" %state_5)
-    print("state_6 : %s" %state_6)
-    print("state_7 : %s" %state_7)
-    print("state_8 : %s" %state_8)
-    print("state_9 : %s" %state_9)
-    print("state_10: %s" %state_10)
-    print("state_11: %s" %state_11)
-    print("state_12: %s" %state_12)
-    print("state_13: %s" %state_13)
-    print("state_14: %s \n" %state_14)
-    
     
     #Wird nur ausgefürt nach Hardreset oder NOTHALT oder Fehler!
     if state_1 == True and NOTHALT.locked() == False and anlage_ein == True:
@@ -259,11 +234,9 @@ while True:
         else:
             state_5 	= False
             state_6 	= True
-            print("state 5 off gut")
     elif state_5 == True and anlage_ein == False and anlage_ist_aus == False and NOTHALT.locked() == False:
         state_5  = False
         state_11 = True
-        print("state 5 anlage aus")
 
     if state_6 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
         display.fill(0)
@@ -280,11 +253,9 @@ while True:
             state_6 	= False
             state_7 	= True
             pos_drehen 	= rueckgabe_drehen_sonne[1]
-            print("state 6 off gut")
     elif state_6 == True and anlage_ein == False and anlage_ist_aus == False and NOTHALT.locked() == False:
         state_6  = False
         state_11 = True
-        print("state 6 anlage aus")
 
     if state_7 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
         display.fill(0)
@@ -303,11 +274,9 @@ while True:
             state_8 	= True
             pos_neigen 	= rueckgabe_neigen_sonne[1]
             zeit_alt 	= ticks_ms()
-            print("state 7 off gut")
     elif state_7 == True and anlage_ein == False and anlage_ist_aus == False and NOTHALT.locked() == False:
         state_7  = False
         state_11 = True
-        print("state 7 anlage aus")
 
     if state_8 == True and NOTHALT.locked() == False and anlage_ein == True and fehler == 0 and sonnen_pos >0:
         zeit_neu = ticks_ms()
@@ -469,4 +438,3 @@ while True:
 
 
     sleep(.2)
-
