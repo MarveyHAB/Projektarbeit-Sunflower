@@ -66,7 +66,7 @@ pos_neigen 			= 0
 pos_drehen 			= 0
 
 #Zeit zum Automtischen ausrichten in sek.
-zeitabstand_ausrichten = 10
+zeitabstand_ausrichten = 120
 
 def ISR_ein_aus(pin27):
     global anlage_ein, fehler, NOTHALT, push_ein_aus, push_ein_aus_old, quittieren, state_1, state_2, state_3, state_4, state_5, state_6, state_7, state_8, state_9, state_10, state_11, state_12, state_13, state_14
@@ -402,6 +402,11 @@ while True:
             state_11 = False
             
     if state_12 == True and NOTHALT.locked() == False and fehler == 0:
+        display.fill(0)
+        display.text('Sunflower'     , 0,  0, 1)
+        display.text('dreht auf'     , 0, 10, 1)
+        display.text('Grundposition.', 0, 20, 1)
+        display.show()
         rueckgabe_drehen = drehen_grundpos(NOTHALT)
         if rueckgabe_drehen != 0:
             fehler = rueckgabe_drehen
@@ -410,6 +415,11 @@ while True:
             state_13 = True
         
     if state_13 == True and NOTHALT.locked() == False and fehler == 0:
+        display.fill(0)
+        display.text('Sunflower'     , 0,  0, 1)
+        display.text('faechert auf'  , 0, 10, 1)
+        display.text('Grundposition.', 0, 20, 1)
+        display.show()
         rueckgabe_faechern = einfaechern(NOTHALT)
         if rueckgabe_faechern != 0:
             fehler = rueckgabe_faechern
@@ -418,6 +428,11 @@ while True:
             state_14 = True
         
     if state_14 == True and NOTHALT.locked() == False and fehler == 0:
+        display.fill(0)
+        display.text('Sunflower'    , 0,  0, 1)
+        display.text('neigt auf'    , 0, 10, 1)
+        display.text('Parkposition.', 0, 20, 1)
+        display.show()
         rueckgabe_neigen_0 = neigen0(NOTHALT, pos_neigen)
         if rueckgabe_neigen_0[0] !=0:
             fehler = rueckgabe_neigen_0[0]
